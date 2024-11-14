@@ -1,0 +1,12 @@
+#![allow(dead_code)]
+
+pub const APP_ID: &str = @APP_ID@;
+pub const BASE_ID: &str = @BASE_ID@;
+pub const RESOURCES_PATH: &str = @RESOURCES_PATH@;
+pub const GETTEXT_PACKAGE: &str = @GETTEXT_PACKAGE@;
+pub const LOCALEDIR: &str = @LOCALEDIR@;
+pub const PROFILE: &str = @PROFILE@;
+pub const RESOURCES_BYTES: &[u8] = include_bytes!(concat!(
+    @BUILD_DIR@,
+    "/data/resources/resources.gresource"
+));

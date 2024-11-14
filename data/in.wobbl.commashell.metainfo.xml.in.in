@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2024 Suyash Singh <suyashtnt@gmail.com> -->
+<component type="desktop">
+  <id>in.wobbl.commashell</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Commashell</name>
+  <summary>A desktop shell of all time</summary>
+  <launchable type="desktop-id">@app-id@.desktop</launchable>
+  <description>
+    <p>
+        A desktop shell that exists
+    </p>
+  </description>
+  <url type="homepage">http://github.com/suyashtnt/commashell</url>
+  <url type="vcs-browser">http://github.com/suyashtnt/commashell</url>
+  <url type="bugtracker">http://github.com/suyashtnt/commashell/issues</url>
+  <update_contact>suyashtnt@gmail.com</update_contact>
+</component>

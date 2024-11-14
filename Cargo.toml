@@ -1,0 +1,11 @@
+[package]
+name = "commashell"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+adw = { version = "0.7.1", package = "libadwaita", features = ["v1_6"] }
+gtk = { version = "0.9.4", package = "gtk4", features = ["v4_16", "blueprint"] }
+tokio = { version = "1.41.1", features = ["rt", "macros", "rt-multi-thread"] }
