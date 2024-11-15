@@ -1,13 +1,16 @@
+mod app;
 mod shell;
 
 use std::sync::LazyLock;
 
-use adw::Application;
+use app::App;
+use astal::prelude::{ApplicationExt as AstalApplicationExt, WindowExt};
+use astal_io::prelude::{ApplicationExt as AstalIOApplicationExt, *};
 use config::{APP_ID, RESOURCES_BYTES, RESOURCES_PATH};
-use gtk::prelude::*;
+use gtk::glib::clone;
+use gtk::prelude::{ApplicationExt, *};
 use gtk::{gdk, gio, glib};
-use shell::Shell;
-
+use shell::Top;
 #[rustfmt::skip]
 mod config;
 
@@ -32,28 +35,33 @@ fn init_icons<P: IsA<gdk::Display>>(display: &P) {
 fn main() -> glib::ExitCode {
     init_resources();
     // Create a new application
-    let app = Application::builder()
+    let app = App::builder()
         .application_id(APP_ID)
         .resource_base_path(RESOURCES_PATH)
         .build();
+
+    app.acquire_socket().expect("To acquire socket");
+
+    gtk::init().expect("To initialize GTK");
 
     match app.register(gio::Cancellable::NONE) {
         Ok(_) => {}
         Err(err) => eprintln!("Registration error, {}", err),
     }
 
-    build_ui(&app);
+    app.connect_activate(clone!(
+        #[strong]
+        app,
+        move |_| {
+            for monitor in &app.monitors() {
+                let window = Top::new(&app, monitor);
+                init_icons(&<Top as RootExt>::display(&window));
+
+                app.add_window(&window);
+            }
+        }
+    ));
 
     // Run the application
     app.run()
-}
-
-fn build_ui(app: &Application) {
-    let window = Shell::new(app);
-    init_icons(&<Shell as RootExt>::display(&window));
-
-    window.present();
-    app.connect_activate(move |_| {
-        window.present();
-    });
 }

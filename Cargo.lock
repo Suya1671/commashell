@@ -136,6 +136,7 @@ name = "commashell"
 version = "0.1.0"
 dependencies = [
  "astal",
+ "astal-io",
  "gtk4",
  "libadwaita",
  "tokio",

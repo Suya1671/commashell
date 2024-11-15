@@ -1,4 +1,6 @@
 {
     "mesonbuild.configureOnOpen": false,
-    "cmake.ignoreCMakeListsMissing": true
+    "cmake.ignoreCMakeListsMissing": true,
+    "C_Cpp.default.compileCommands": "/home/tntman/projects/commashell/builddir/compile_commands.json",
+    "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild"
 }

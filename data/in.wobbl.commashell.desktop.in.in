@@ -6,6 +6,5 @@ Exec=commashell %U
 Terminal=false
 Categories=GTK;Shell;
 OnlyShowIn=X-niri;
-# Translators: Do NOT translate or transliterate this text (this is an icon file name)!
 # Icon=@icon@ need icons still
 StartupNotify=true

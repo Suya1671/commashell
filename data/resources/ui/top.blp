@@ -1,12 +1,11 @@
 using Gtk 4.0;
-using Adw 1;
+using Astal 4.0;
 
-template $Window: Adw.ApplicationWindow {
-    default-width: 600;
-    default-height: 300;
+template $Top: Astal.Window {
+    default-height: 60;
     title: _("Hello, Blueprint!");
-
-    Adw.HeaderBar {}
+    exclusivity: exclusive;
+    anchor: top | left | right;
 
     Label label {
         label: bind template.main-text no-sync-create;

@@ -1,6 +1,5 @@
 blps = [
-    'window.blp',
-    'shell.blp',
+    'top.blp',
 ]
 
 uis = []

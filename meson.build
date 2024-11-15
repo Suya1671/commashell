@@ -1,18 +1,15 @@
 # I have no clue what I am doing.
 # If you are reading this and do have a clue,
 # feel free to make a PR/Issue on fixing the absolute nonsense below.
-project('commashell', 'rust',
-  version : '0.1',
-  default_options : ['warning_level=3'])
+project('commashell', 'rust', version: '0.1', default_options: ['warning_level=3'])
 
-i18n = import('i18n')
 gnome = import('gnome')
 
 dependency('glib-2.0', version: '>= 2.66')
 dependency('gio-2.0', version: '>= 2.66')
 
-dependency('gtk4', version : '>=4.16')
-dependency('libadwaita-1', version : '>=1.6')
+dependency('gtk4', version: '>=4.16')
+dependency('libadwaita-1', version: '>=1.6')
 
 base_id = 'in.wobbl.commashell'
 application_id = 'in.wobbl.commashell'
@@ -55,7 +52,6 @@ else
 endif
 
 subdir('data')
-subdir('po')
 subdir('src')
 
 gnome.post_install(

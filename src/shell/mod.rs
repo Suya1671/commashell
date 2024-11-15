@@ -1,20 +1,32 @@
-use adw::Application;
 use gtk::{
+    gdk::Monitor,
     gio,
     glib::{self, Object},
+    prelude::{GtkWindowExt, MonitorExt},
 };
+
+use crate::app::App;
 
 mod imp;
 
 glib::wrapper! {
-    pub struct Shell(ObjectSubclass<imp::Shell>)
+    pub struct Top(ObjectSubclass<imp::Top>)
         @extends astal::Window, gtk::Window, gtk::Widget,
         @implements gio::ActionGroup, gio::ActionMap, gtk::Accessible, gtk::Buildable,
                     gtk::ConstraintTarget, gtk::Native, gtk::Root, gtk::ShortcutManager;
 }
 
-impl Shell {
-    pub fn new(app: &Application) -> Self {
-        Object::builder().property("application", app).build()
+impl Top {
+    pub fn new(app: &App, monitor: &Monitor) -> Self {
+        let current: Self = Object::builder()
+            .property("application", app)
+            .property("gdkmonitor", monitor)
+            .property("main-text", "Hi!")
+            .property("default-width", dbg!(monitor.geometry().width()))
+            .build();
+
+        current.present();
+
+        current
     }
 }
