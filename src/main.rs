@@ -1,12 +1,12 @@
-mod window;
+mod shell;
 
 use std::sync::LazyLock;
 
 use adw::Application;
 use config::{APP_ID, RESOURCES_BYTES, RESOURCES_PATH};
-use gtk::{gdk, gio, glib, Button};
-use gtk::{prelude::*, ApplicationWindow};
-use window::Window;
+use gtk::prelude::*;
+use gtk::{gdk, gio, glib};
+use shell::Shell;
 
 #[rustfmt::skip]
 mod config;
@@ -49,8 +49,8 @@ fn main() -> glib::ExitCode {
 }
 
 fn build_ui(app: &Application) {
-    let window = Window::new(app);
-    init_icons(&<Window as RootExt>::display(&window));
+    let window = Shell::new(app);
+    init_icons(&<Shell as RootExt>::display(&window));
 
     window.present();
     app.connect_activate(move |_| {

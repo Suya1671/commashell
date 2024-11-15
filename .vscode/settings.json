@@ -1,0 +1,4 @@
+{
+    "mesonbuild.configureOnOpen": false,
+    "cmake.ignoreCMakeListsMissing": true
+}

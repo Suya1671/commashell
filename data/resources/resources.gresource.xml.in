@@ -2,6 +2,7 @@
 <gresources>
   <gresource prefix="/in/wobbl/commashell/">
     <file compressed="true" preprocess="xml-stripblanks">ui/window.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/shell.ui</file>
     <file compressed="true">style.css</file>
     <file compressed="true">style-dark.css</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="in.wobbl.commashell.metainfo.xml">@appdata-file@</file>

@@ -9,3 +9,7 @@ edition = "2021"
 adw = { version = "0.7.1", package = "libadwaita", features = ["v1_6"] }
 gtk = { version = "0.9.4", package = "gtk4", features = ["v4_16", "blueprint"] }
 tokio = { version = "1.41.1", features = ["rt", "macros", "rt-multi-thread"] }
+astal = { package = "astal", path = "./astal-rs/astal", features = [
+    "gtk_v4_6",
+    "gio_v2_80",
+] }

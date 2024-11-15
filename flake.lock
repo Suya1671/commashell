@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "astal": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1731657843,
+        "narHash": "sha256-Jx97/fTY74pY3IDeuDvQrXlzs+sBhFkooJ2HeYvM224=",
+        "owner": "aylur",
+        "repo": "astal",
+        "rev": "27bc3dd95fe752cbaf5c84aa1bca436c80ce0c15",
+        "type": "github"
+      },
+      "original": {
+        "owner": "aylur",
+        "repo": "astal",
+        "type": "github"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1731098351,
@@ -51,6 +71,7 @@
     },
     "root": {
       "inputs": {
+        "astal": "astal",
         "crane": "crane",
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",

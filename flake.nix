@@ -12,6 +12,11 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    astal = {
+      url = "github:aylur/astal";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -20,6 +25,7 @@
     crane,
     flake-utils,
     rust-overlay,
+    astal,
     ...
   }:
     flake-utils.lib.eachDefaultSystem (system: let
@@ -29,6 +35,13 @@
           (import rust-overlay)
         ];
       };
+      astalPkgs = astal.packages.${system};
+
+      # more will be added when I need em
+      astalLibs = with astalPkgs; [
+        astal4
+        io
+      ];
 
       toolchain = pkgs.rust-bin.stable.latest.default.override {
         extensions = ["rust-src" "rust-analyzer"];
@@ -55,12 +68,16 @@
           pkgs.wrapGAppsHook4
           pkgs.appstream
           pkgs.blueprint-compiler
+          pkgs.libxml2
+          pkgs.libspelling
         ];
 
-        buildInputs = [
-          pkgs.gtk4
-          pkgs.libadwaita
-        ];
+        buildInputs =
+          [
+            pkgs.gtk4
+            pkgs.libadwaita
+          ]
+          ++ astalLibs;
       };
     in {
       packages.default = crate;

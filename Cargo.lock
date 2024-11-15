@@ -18,6 +18,54 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "512761e0bb2578dd7380c6baaa0f4ce03e84f95e960231d1dec8bf4d7d6e2627"
 
 [[package]]
+name = "astal"
+version = "0.1.0"
+dependencies = [
+ "astal-io",
+ "astal-sys",
+ "bitflags",
+ "gdk4",
+ "gio",
+ "glib",
+ "gtk4",
+ "libc",
+]
+
+[[package]]
+name = "astal-io"
+version = "0.1.0"
+dependencies = [
+ "astal-io-sys",
+ "bitflags",
+ "gio",
+ "glib",
+ "libc",
+]
+
+[[package]]
+name = "astal-io-sys"
+version = "0.0.1"
+dependencies = [
+ "gio-sys",
+ "glib-sys",
+ "gobject-sys",
+ "libc",
+ "system-deps",
+]
+
+[[package]]
+name = "astal-sys"
+version = "0.0.1"
+dependencies = [
+ "gdk4-sys",
+ "gio-sys",
+ "glib-sys",
+ "gtk4-sys",
+ "libc",
+ "system-deps",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -87,6 +135,7 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 name = "commashell"
 version = "0.1.0"
 dependencies = [
+ "astal",
  "gtk4",
  "libadwaita",
  "tokio",
