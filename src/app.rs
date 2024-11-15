@@ -61,7 +61,7 @@ impl AppBuilder {
 }
 
 mod imp {
-    use astal_io::subclass::prelude::AstalIOApplicationImpl;
+    use astal_io::{functions::write_sock, subclass::prelude::AstalIOApplicationImpl};
 
     use super::*;
 
@@ -73,16 +73,20 @@ mod imp {
         const NAME: &'static str = "App";
         type Type = super::App;
         type ParentType = astal::Application;
+        type Interfaces = (astal_io::Application,);
     }
 
     impl AstalApplicationImpl for App {}
     impl AstalIOApplicationImpl for App {
         fn request(&self, msg: &str, conn: &gio::SocketConnection) -> Result<(), glib::Error> {
-            dbg!(msg, conn);
+            write_sock(conn, msg, |res| {
+                if let Err(err) = res {
+                    eprintln!("Error: {}", err);
+                }
+            });
             Ok(())
         }
     }
-    impl AccessibleImpl for App {}
     impl GtkApplicationImpl for App {}
     impl ApplicationImpl for App {}
     impl ObjectImpl for App {}

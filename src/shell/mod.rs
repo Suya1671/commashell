@@ -22,7 +22,7 @@ impl Top {
             .property("application", app)
             .property("gdkmonitor", monitor)
             .property("main-text", "Hi!")
-            .property("default-width", dbg!(monitor.geometry().width()))
+            .property("default-width", monitor.geometry().width())
             .build();
 
         current.present();
