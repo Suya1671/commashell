@@ -1,0 +1,163 @@
+using Gtk 4.0;
+using Adw 1;
+using Vte 3.91;
+
+template $Right: Adw.Window {
+    title: "Right sidebar";
+    default-width: 1;
+    width-request: 1;
+
+    styles [
+        "right"
+    ]
+
+    Revealer {
+        reveal-child: bind template.reveal;
+        transition-type: slide_right;
+        transition-duration: 200;
+
+        Box {
+            orientation: vertical;
+            width-request: 360;
+
+            styles [
+                "inner"
+            ]
+
+            Overlay player {
+                height-request: 360;
+
+                styles [
+                    "player"
+                ]
+
+                Image {
+                    width-request: 360;
+                    height-request: 360;
+                    file: bind template.cover-art;
+                }
+            }
+
+            Overlay lyrics {
+                vexpand: true;
+
+                styles [
+                    "player"
+                ]
+
+                // child set in code to cava thing
+            }
+        }
+    }
+}
+
+Box player_content {
+    orientation: vertical;
+    // push everything down
+    Box {
+        vexpand: true;
+    }
+
+    Box {
+        height-request: 50;
+        orientation: horizontal;
+
+        styles [
+            "player_content",
+            "toolbar"
+        ]
+
+        Box {
+            styles [
+                "linked"
+            ]
+
+            Button {
+                icon-name: "skip-backward-large-symbolic";
+                clicked => $on_back_clicked() swapped;
+
+                styles [
+                    "button"
+                ]
+            }
+
+            Button play {
+                icon-name: "play-large-symbolic";
+                clicked => $on_play_clicked() swapped;
+
+                styles [
+                    "button"
+                ]
+            }
+
+            Button {
+                icon-name: "skip-forward-large-symbolic";
+                clicked => $on_next_clicked() swapped;
+
+                styles [
+                    "button"
+                ]
+            }
+        }
+
+        Scale seeker {
+            hexpand: true;
+        }
+    }
+}
+
+Box lyrics_content {
+    orientation: vertical;
+
+    styles [
+        "lyrics_content"
+    ]
+
+    Box {
+        orientation: vertical;
+
+        styles [
+            "title-header"
+        ]
+
+        Label song_title {
+            label: bind template.title;
+            halign: center;
+            overflow: hidden;
+            justify: center;
+            wrap: true;
+            // 360 - 16 * 2
+            width-request: 328;
+            natural-wrap-mode: word;
+            wrap-mode: word_char;
+
+            styles [
+                "title-1"
+            ]
+        }
+
+        Label artist_name {
+            label: bind template.artist;
+            halign: center;
+            overflow: hidden;
+            justify: center;
+            // 360 - 16 * 2
+            width-request: 328;
+            natural-wrap-mode: word;
+            wrap-mode: word_char;
+
+            styles [
+                "title-2"
+            ]
+        }
+    }
+
+    Vte.Terminal lyrics_terminal {
+        vexpand: true;
+        hexpand: true;
+
+        styles [
+            "lyrics"
+        ]
+    }
+}

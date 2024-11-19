@@ -19,7 +19,7 @@ if appstreamcli.found()
   )
 endif
 
-subdir('icons')
+# subdir('icons')
 subdir('resources')
 
 # Desktop file

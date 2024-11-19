@@ -1,13 +1,45 @@
 using Gtk 4.0;
-using Astal 4.0;
+using Adw 1;
 
-template $Top: Astal.Window {
-    default-height: 60;
-    title: _("Hello, Blueprint!");
-    exclusivity: exclusive;
-    anchor: top | left | right;
+template $Top: Adw.Window {
+    title: "Top bar";
+    default-height: 1;
+    height-request: 1;
 
-    Label label {
-        label: bind template.main-text no-sync-create;
+    styles [
+        "top"
+    ]
+
+    Revealer {
+        reveal-child: bind template.reveal;
+        transition-type: slide_down;
+        transition-duration: 200;
+
+        CenterBox {
+            orientation: horizontal;
+            height-request: 60;
+
+            styles [
+                "inner"
+            ]
+
+            start-widget: Adw.Spinner {};
+
+            center-widget: Box {
+                orientation: horizontal;
+
+                styles [
+                    "center"
+                ]
+
+                Label {
+                    label: bind template.time;
+                }
+            };
+
+            end-widget: Button button {
+                label: _("Click me!");
+            };
+        }
     }
 }

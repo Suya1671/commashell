@@ -1,5 +1,6 @@
 blps = [
     'top.blp',
+    'right.blp',
 ]
 
 uis = []

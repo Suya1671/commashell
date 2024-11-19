@@ -2,11 +2,23 @@
 <gresources>
   <gresource prefix="/in/wobbl/commashell/">
     <file compressed="true" preprocess="xml-stripblanks">ui/top.ui</file>
-    <file compressed="true">style.css</file>
-    <file compressed="true">style-dark.css</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/right.ui</file>
+    <file>style.css</file>
     <file
       compressed="true"
       preprocess="xml-stripblanks"
       alias="in.wobbl.commashell.metainfo.xml">@appdata-file@</file>
+  </gresource>
+  <gresource prefix="/in/wobbl/commashell/icons/scalable/actions/">
+    <file
+      preprocess="xml-stripblanks"
+      alias="skip-backward-large-symbolic.svg">icons/skip-backward-large-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="play-large-symbolic.svg">icons/play-large-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+      alias="pause-large-symbolic.svg">icons/pause-large-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+      alias="skip-forward-large-symbolic.svg">icons/skip-forward-large-symbolic.svg</file>
   </gresource>
 </gresources>

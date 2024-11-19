@@ -2,6 +2,7 @@ use astal::subclass::prelude::*;
 use gtk::{
     gio,
     glib::{self, Object},
+    prelude::*,
     subclass::prelude::*,
 };
 
@@ -61,12 +62,21 @@ impl AppBuilder {
 }
 
 mod imp {
+    use std::cell::RefCell;
+
     use astal_io::{functions::write_sock, subclass::prelude::AstalIOApplicationImpl};
+    use glib::Properties;
 
     use super::*;
 
-    #[derive(Default, Debug)]
-    pub struct App;
+    #[derive(Properties, Default, Debug)]
+    #[properties(wrapper_type = super::App)]
+    pub struct App {
+        #[property(get, set)]
+        pub top_reveal: RefCell<bool>,
+        #[property(get, set)]
+        pub right_reveal: RefCell<bool>,
+    }
 
     #[glib::object_subclass]
     impl ObjectSubclass for App {
@@ -79,15 +89,52 @@ mod imp {
     impl AstalApplicationImpl for App {}
     impl AstalIOApplicationImpl for App {
         fn request(&self, msg: &str, conn: &gio::SocketConnection) -> Result<(), glib::Error> {
-            write_sock(conn, msg, |res| {
-                if let Err(err) = res {
-                    eprintln!("Error: {}", err);
+            let obj = self.obj();
+
+            match msg {
+                "toggle top" => {
+                    obj.set_top_reveal(!obj.top_reveal());
+                    Ok(())
                 }
-            });
-            Ok(())
+                "toggle right" => {
+                    obj.set_right_reveal(!obj.right_reveal());
+                    Ok(())
+                }
+                "toggle all" => {
+                    obj.set_top_reveal(!obj.top_reveal());
+                    obj.set_right_reveal(!obj.right_reveal());
+                    Ok(())
+                }
+                "on all" => {
+                    obj.set_top_reveal(true);
+                    obj.set_right_reveal(true);
+                    Ok(())
+                }
+                "off all" => {
+                    obj.set_top_reveal(false);
+                    obj.set_right_reveal(false);
+                    Ok(())
+                }
+                msg => {
+                    write_sock(conn, msg, |res| {
+                        if let Err(err) = res {
+                            eprintln!("Error: {}", err);
+                        }
+                    });
+                    Ok(())
+                }
+            }
         }
     }
     impl GtkApplicationImpl for App {}
     impl ApplicationImpl for App {}
-    impl ObjectImpl for App {}
+
+    #[glib::derived_properties]
+    impl ObjectImpl for App {
+        fn constructed(&self) {
+            self.parent_constructed();
+            self.obj().set_top_reveal(false);
+            self.obj().set_right_reveal(false);
+        }
+    }
 }

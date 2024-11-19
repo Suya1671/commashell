@@ -20,9 +20,7 @@
   };
 
   outputs = {
-    self,
     nixpkgs,
-    crane,
     flake-utils,
     rust-overlay,
     astal,
@@ -41,6 +39,8 @@
       astalLibs = with astalPkgs; [
         astal4
         io
+        mpris
+        cava
       ];
 
       toolchain = pkgs.rust-bin.stable.latest.default.override {
@@ -75,6 +75,7 @@
         buildInputs =
           [
             pkgs.gtk4
+            pkgs.vte-gtk4
             pkgs.libadwaita
           ]
           ++ astalLibs;

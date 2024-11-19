@@ -1,0 +1,62 @@
+.top {
+  margin-left: 1rem;
+  margin-right: 1rem;
+  border-radius: 0 0 12px 12px;
+}
+
+.top .inner {
+  padding: 0.5rem 1rem;
+}
+
+.top .center {
+  background-color: var(--accent-bg-color);
+  color: var(--accent-fg-color);
+
+  border-radius: 12px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.right {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 12px 0 0 12px;
+}
+
+.top .inner {
+  padding: 0.5rem 1rem;
+}
+
+.cava {
+  color: var(--accent-color);
+  filter: blur(12px) brightness(0.4);
+}
+
+.player_content {
+  background: rgb(from var(--headerbar-bg-color) r g b);
+
+  padding: 1rem;
+  padding-bottom: 0.5rem;
+  border-radius: 2rem 2rem 0 0;
+}
+
+.player_content > .linked > .button {
+  --accent-color: var(--accent-purple);
+  color: var(--accent-color);
+}
+
+.title-header {
+  background: rgb(from var(--headerbar-bg-color) r g b / 0.8);
+
+  padding-bottom: 1rem;
+  border-radius: 0 0 2rem 2rem;
+  margin-bottom: 1rem;
+}
+
+.title-header .title-1 {
+  padding: 0.5rem;
+}
+
+.lyrics {
+  padding: 1rem;
+}
