@@ -15,6 +15,8 @@ use crate::cava::Cava;
 #[template(resource = "/in/wobbl/commashell/ui/right.ui")]
 #[properties(wrapper_type = super::Right)]
 pub struct Right {
+    #[template_child]
+    pub default_text: TemplateChild<gtk::Label>,
     #[template_child(id = "player")]
     pub player_overlay: TemplateChild<gtk::Overlay>,
     #[template_child(id = "lyrics")]
@@ -33,15 +35,9 @@ pub struct Right {
     #[property(get, set)]
     pub reveal: RefCell<bool>,
     #[property(get, set)]
-    cover_art: RefCell<String>,
-    #[property(get, set)]
     length: RefCell<f64>,
     #[property(get, set)]
     position: RefCell<f64>,
-    #[property(get, set)]
-    title: RefCell<String>,
-    #[property(get, set)]
-    artist: RefCell<String>,
     #[property(get, set)]
     playing: RefCell<bool>,
     #[property(get, set, nullable)]

@@ -41,6 +41,7 @@
         io
         mpris
         cava
+        notifd
       ];
 
       toolchain = pkgs.rust-bin.stable.latest.default.override {

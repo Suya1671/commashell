@@ -96,6 +96,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "astal-notifd"
+version = "0.1.0"
+dependencies = [
+ "astal-notifd-sys",
+ "bitflags",
+ "gio",
+ "glib",
+ "libc",
+]
+
+[[package]]
+name = "astal-notifd-sys"
+version = "0.0.1"
+dependencies = [
+ "glib-sys",
+ "gobject-sys",
+ "libc",
+ "system-deps",
+]
+
+[[package]]
 name = "astal-sys"
 version = "0.0.1"
 dependencies = [
@@ -182,6 +203,7 @@ dependencies = [
  "astal-cava",
  "astal-io",
  "astal-mpris",
+ "astal-notifd",
  "gtk4",
  "gtk4-layer-shell",
  "libadwaita",

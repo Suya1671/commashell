@@ -1,6 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 using Vte 3.91;
+using AstalMpris 0.1;
 
 template $Right: Adw.Window {
     title: "Right sidebar";
@@ -24,6 +25,20 @@ template $Right: Adw.Window {
                 "inner"
             ]
 
+            Label default_text {
+                label: "Nothing is playing";
+                halign: center;
+                justify: center;
+                wrap: true;
+                width-request: 328;
+                natural-wrap-mode: word;
+                wrap-mode: word_char;
+
+                styles [
+                    "title-1"
+                ]
+            }
+
             Overlay player {
                 height-request: 360;
 
@@ -34,7 +49,7 @@ template $Right: Adw.Window {
                 Image {
                     width-request: 360;
                     height-request: 360;
-                    file: bind template.cover-art;
+                    file: bind (template.player as <AstalMpris.Player>).cover-art;
                 }
             }
 
@@ -121,7 +136,7 @@ Box lyrics_content {
         ]
 
         Label song_title {
-            label: bind template.title;
+            label: bind (template.player as <AstalMpris.Player>).title;
             halign: center;
             overflow: hidden;
             justify: center;
@@ -137,7 +152,7 @@ Box lyrics_content {
         }
 
         Label artist_name {
-            label: bind template.artist;
+            label: bind (template.player as <AstalMpris.Player>).artist;
             halign: center;
             overflow: hidden;
             justify: center;

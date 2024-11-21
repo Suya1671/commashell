@@ -13,5 +13,6 @@ astal = { path = "./astal-rs/astal", features = ["gtk_v4_6", "gio_v2_80"] }
 astal-io = { path = "./astal-rs/astal-io" }
 astal-mpris = { path = "./astal-rs/mpris" }
 astal-cava = { path = "./astal-rs/cava" }
+astal-notifd = { path = "./astal-rs/notifd" }
 gtk4-layer-shell = "0.4.0"
 vte4 = { version = "0.8.0", features = ["v0_78"] }

@@ -3,6 +3,8 @@
   <gresource prefix="/in/wobbl/commashell/">
     <file compressed="true" preprocess="xml-stripblanks">ui/top.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/right.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/notification.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/notifications.ui</file>
     <file>style.css</file>
     <file
       compressed="true"

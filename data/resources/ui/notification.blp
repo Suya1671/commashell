@@ -1,0 +1,122 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $Notification: Box {
+    focusable: true;
+    orientation: vertical;
+
+    styles [
+        "notification-container"
+    ]
+
+    Box {
+        orientation: vertical;
+
+        styles [
+            "notification"
+        ]
+
+        CenterBox {
+            styles [
+                "header"
+            ]
+
+            start-widget: Box {
+                Adw.Bin icon_holder {
+                    styles [
+                        "icon-holder"
+                    ]
+                }
+
+                Label {
+                    styles [
+                        "app-name",
+                        "title-2"
+                    ]
+
+                    halign: start;
+                    label: bind template.app-name;
+                }
+
+                Label {
+                    styles [
+                        "time",
+                        "caption"
+                    ]
+
+                    halign: end;
+                    label: bind template.time;
+                }
+            };
+
+            end-widget: Button {
+                styles [
+                    "close-button"
+                ]
+
+                clicked => $on_dismiss() swapped;
+                icon-name: "window-close-symbolic";
+            };
+        }
+
+        Separator {
+            visible: true;
+
+            styles [
+                "separator"
+            ]
+        }
+
+        Box {
+            styles [
+                "content"
+            ]
+
+            Adw.Bin image_holder {
+                styles [
+                    "image-holder"
+                ]
+            }
+
+            Box {
+                orientation: vertical;
+
+                Label {
+                    styles [
+                        "summary",
+                        "heading"
+                    ]
+
+                    halign: start;
+                    xalign: 0;
+                    label: bind template.summary;
+                }
+
+                Label {
+                    styles [
+                        "body",
+                        "body-content"
+                    ]
+
+                    halign: start;
+                    xalign: 0;
+                    use-markup: true;
+                    wrap: true;
+                    justify: fill;
+                    label: bind template.body;
+                }
+            }
+        }
+
+        Adw.Bin actions_holder {
+            styles [
+                "actions-holder"
+            ]
+        }
+    }
+}
+
+EventControllerMotion event_controller {
+    name: "Notification Hover";
+    leave => $on_hover_leave() swapped;
+}

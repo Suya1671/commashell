@@ -6,6 +6,7 @@ use gtk::{
     prelude::{GtkWindowExt, MonitorExt, ObjectExt, ToValue},
 };
 use gtk4_layer_shell::{Edge, LayerShell};
+use vte4::WidgetExt;
 
 use crate::app::App;
 
@@ -68,6 +69,7 @@ impl Top {
         }
 
         current.set_default_height(1);
+        current.set_height_request(1);
         current.auto_exclusive_zone_enable();
 
         current.present();

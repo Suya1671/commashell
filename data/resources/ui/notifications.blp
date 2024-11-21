@@ -1,0 +1,23 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $Notifications: Adw.Window {
+    default-height: 1;
+    default-width: 1;
+    width-request: 1;
+    height-request: 1;
+
+    styles [
+        "notifications"
+    ]
+
+    ListBox container {
+        width-request: 1;
+        height-request: 1;
+        selection-mode: none;
+
+        styles [
+            "notifications-container"
+        ]
+    }
+}

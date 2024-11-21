@@ -7,8 +7,10 @@ use gtk::{
     gio,
     glib::{self, Object},
     prelude::{GtkWindowExt, MonitorExt, ObjectExt},
+    subclass::prelude::ObjectSubclassIsExt,
 };
 use gtk4_layer_shell::{Edge, LayerShell};
+use vte4::WidgetExt;
 
 use crate::app::App;
 
@@ -80,6 +82,9 @@ fn connect_players(mpris: &Mpris, current: &Right) {
         })
         .cloned()
     else {
+        current.imp().player_overlay.set_visible(false);
+        current.imp().lyrics_overlay.set_visible(false);
+        current.imp().default_text.set_visible(true);
         current.set_player(None::<Player>);
         return;
     };
@@ -89,23 +94,11 @@ fn connect_players(mpris: &Mpris, current: &Right) {
     }
 
     current.set_player(Some(player.clone()));
-
-    if let Some(cover_art) = player.cover_art() {
-        current.set_cover_art(cover_art);
-    }
+    current.imp().player_overlay.set_visible(true);
+    current.imp().lyrics_overlay.set_visible(true);
+    current.imp().default_text.set_visible(false);
 
     current.set_length(player.length());
-
-    // setup template binds to new player
-    player.connect_cover_art_notify(glib::clone!(
-        #[weak]
-        current,
-        move |player| {
-            if let Some(cover_art) = player.cover_art() {
-                current.set_cover_art(cover_art);
-            }
-        }
-    ));
 
     player.connect_length_notify(glib::clone!(
         #[weak]
@@ -118,16 +111,6 @@ fn connect_players(mpris: &Mpris, current: &Right) {
     player
         .bind_property("position", current, "position")
         .bidirectional()
-        .sync_create()
-        .build();
-
-    player
-        .bind_property("title", current, "title")
-        .sync_create()
-        .build();
-
-    player
-        .bind_property("artist", current, "artist")
         .sync_create()
         .build();
 

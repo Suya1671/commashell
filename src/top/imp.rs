@@ -27,7 +27,6 @@ impl ObjectSubclass for Top {
     type ParentType = adw::Window;
 
     fn class_init(klass: &mut Self::Class) {
-        adw::Spinner::ensure_type();
         klass.bind_template();
     }
 

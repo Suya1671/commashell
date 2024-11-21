@@ -1,5 +1,7 @@
 mod app;
 mod cava;
+mod notification;
+mod notifications;
 mod right;
 mod top;
 
@@ -55,6 +57,9 @@ fn main() -> glib::ExitCode {
 
                 let right = right::Right::new(&app, monitor);
                 app.add_window(&right);
+
+                let notifications = notifications::Notifications::new(&app, monitor);
+                app.add_window(&notifications);
             }
 
             app.apply_css(CSS_STYLE, false);

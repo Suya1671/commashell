@@ -1,6 +1,8 @@
 blps = [
     'top.blp',
     'right.blp',
+    'notification.blp',
+    'notifications.blp',
 ]
 
 uis = []

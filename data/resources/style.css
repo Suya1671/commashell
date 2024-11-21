@@ -1,3 +1,4 @@
+/* top */
 .top {
   margin-left: 1rem;
   margin-right: 1rem;
@@ -17,6 +18,7 @@
   padding-right: 1rem;
 }
 
+/* right */
 .right {
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -59,4 +61,102 @@
 
 .lyrics {
   padding: 1rem;
+}
+
+/* notifications */
+/* TODOs: figure out how to make the notifications look better with no image. Try to make em smaller, animations */
+.notifications {
+  background: none;
+}
+
+.notifications-container {
+  min-height: 1px;
+  background: rgb(0 0 0 / 0.01);
+}
+
+.notifications-container:first-child {
+  margin-top: 1rem;
+}
+
+.notification {
+  min-width: 400px;
+  border: double 2pt transparent;
+  background: var(--window-bg-color);
+  border-radius: 7px;
+  padding: 0.5rem;
+}
+
+.notification-container {
+  margin: 0.5rem 1rem 0.5rem 1rem;
+  min-width: 400px;
+  background: linear-gradient(
+    130deg,
+    var(--accent-blue) 0%,
+    var(--accent-color) 100%
+  );
+  border-radius: 12px;
+  padding: 5px;
+}
+
+.critical.notification-container {
+  background: red;
+}
+
+.notification .header {
+  padding: 0.5rem;
+  padding-top: 0;
+}
+
+.notification .header .app-icon {
+  margin-right: 0.5rem;
+}
+
+.notification .header .app-name {
+  margin-right: 0.5rem;
+}
+
+.normal .notification .header .close-button {
+  color: var(--accent-color);
+}
+
+.critical .notification .header {
+  color: var(--accent-red);
+}
+
+.low .notification .header {
+  color: rgb(from var(--window-fg-color) r g b / 0.7);
+}
+
+.notification .header .time {
+  margin: 0 0.4rem;
+  color: rgb(from var(--window-fg-color) r g b / 0.8);
+  font-size: 0.8rem;
+}
+
+.notification .content {
+  margin: 1rem;
+}
+
+.notification .body-content {
+  margin-top: 0.5rem;
+  background: var(--dialog-bg-color);
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.notification .actions {
+  padding: 0;
+}
+
+.notification .actions > * {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.notification .actions:first-child {
+  margin-left: 0;
+}
+
+.notification .actions:last-child {
+  margin-right: 0;
 }
