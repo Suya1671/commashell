@@ -40,13 +40,15 @@ impl Notifications {
             current,
             move |_notifd, notif, _reason| {
                 let notifications = current.notification_widgets();
-                let index = notifications
+                let Some(index) = notifications
                     .iter::<astal_notifd::Notification>()
                     .position(|n| n.is_ok_and(|n| n.id() == notif))
-                    .expect("Expected to get index");
+                else {
+                    eprintln!("Notification not found: {}", notif);
+                    return;
+                };
 
                 notifications.remove(index as u32);
-                println!("Notification resolved: {}", notif);
             }
         ));
 
@@ -71,7 +73,7 @@ impl Notifications {
 
     fn notification_widgets(&self) -> gio::ListStore {
         self.imp()
-            .notification_widgets
+            .notifications
             .borrow()
             .clone()
             .expect("Expected to get current widgets")
@@ -80,7 +82,7 @@ impl Notifications {
     fn setup_notification_widgets(&self) {
         let model = gio::ListStore::new::<astal_notifd::Notification>();
 
-        self.imp().notification_widgets.replace(Some(model));
+        self.imp().notifications.replace(Some(model));
 
         self.imp()
             .container

@@ -1,0 +1,53 @@
+using Gtk 4.0;
+using AstalApps 0.1;
+
+template $AppEntry: Button {
+    clicked => $on_app_clicked();
+
+    styles [
+        "app-entry"
+    ]
+
+    Box {
+        orientation: horizontal;
+
+        Image {
+            icon-name: bind (template.app as <AstalApps.Application>).icon-name;
+            icon-size: large;
+
+            styles [
+                "app-icon"
+            ]
+        }
+
+        Box {
+            orientation: vertical;
+            vexpand: true;
+            valign: center;
+
+            Label {
+                label: bind (template.app as <AstalApps.Application>).name;
+                valign: center;
+                xalign: 0;
+
+                styles [
+                    "app-name",
+                    "heading"
+                ]
+            }
+
+            Label {
+                label: bind (template.app as <AstalApps.Application>).description;
+                valign: center;
+                xalign: 0;
+                justify: left;
+                wrap: true;
+
+                styles [
+                    "app-description",
+                    "body"
+                ]
+            }
+        }
+    }
+}

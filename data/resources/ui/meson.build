@@ -3,6 +3,8 @@ blps = [
     'right.blp',
     'notification.blp',
     'notifications.blp',
+    'launcher.blp',
+    'app-entry.blp',
 ]
 
 uis = []

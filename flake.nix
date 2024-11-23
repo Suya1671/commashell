@@ -42,6 +42,7 @@
         mpris
         cava
         notifd
+        apps
       ];
 
       toolchain = pkgs.rust-bin.stable.latest.default.override {
@@ -80,6 +81,8 @@
             pkgs.libadwaita
           ]
           ++ astalLibs;
+
+        runtimeDeps = [pkgs.libqalculate];
       };
     in {
       packages.default = crate;
@@ -93,6 +96,7 @@
           toolchain
           pkgs.nixd
           pkgs.alejandra
+          pkgs.libqalculate
         ];
       };
     });

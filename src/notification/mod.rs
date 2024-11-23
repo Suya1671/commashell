@@ -61,8 +61,12 @@ impl Notification {
 
         if let Some(image) = notification.image() {
             if fs::exists(&image).unwrap_or_default() {
-                let image = gtk::Image::from_file(image);
+                let image = gtk::Picture::for_filename(image);
                 image.add_css_class("image");
+                image.set_can_shrink(true);
+                image.set_content_fit(gtk::ContentFit::Contain);
+                image.set_width_request(128);
+                image.set_height_request(128);
                 current.imp().image_holder.set_child(Some(&image));
             } else if gtk::IconTheme::for_display(&display).has_icon(&image) {
                 let image = gtk::Image::from_icon_name(&image);

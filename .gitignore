@@ -6,6 +6,8 @@ result*
 
 /build/
 /install/
+/build-release/
+/install-release/
 /.flatpak-builder/
 src/config.rs
 *.ui~

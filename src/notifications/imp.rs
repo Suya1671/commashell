@@ -11,7 +11,7 @@ use gtk::{glib, CompositeTemplate};
 pub struct Notifications {
     #[template_child]
     pub container: TemplateChild<gtk::ListBox>,
-    pub notification_widgets: RefCell<Option<gio::ListStore>>,
+    pub notifications: RefCell<Option<gio::ListStore>>,
 }
 
 #[glib::object_subclass]
@@ -22,7 +22,6 @@ impl ObjectSubclass for Notifications {
     type ParentType = adw::Window;
 
     fn class_init(klass: &mut Self::Class) {
-        adw::Spinner::ensure_type();
         klass.bind_template();
     }
 

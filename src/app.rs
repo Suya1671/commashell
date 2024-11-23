@@ -1,4 +1,5 @@
 use astal::subclass::prelude::*;
+use astal_io::prelude::ApplicationExt as AstalIOApplicationExt;
 use gtk::{
     gio,
     glib::{self, Object},
@@ -19,6 +20,13 @@ impl App {
 
     pub fn builder() -> AppBuilder {
         AppBuilder::new()
+    }
+
+    pub fn disable_launcher(&self) {
+        self.set_launcher_reveal(false);
+        if let Err(e) = self.toggle_window("Launcher") {
+            eprintln!("Launcher Error: {}", e);
+        };
     }
 }
 
@@ -62,10 +70,16 @@ impl AppBuilder {
 }
 
 mod imp {
-    use std::cell::RefCell;
+    use std::{cell::RefCell, sync::RwLock};
 
-    use astal_io::{functions::write_sock, subclass::prelude::AstalIOApplicationImpl};
+    use astal::prelude::{ApplicationExt as AstalApplicationExt, *};
+    use astal_io::{
+        functions::write_sock, prelude::ApplicationExt as AstalIOApplicationExt,
+        subclass::prelude::AstalIOApplicationImpl,
+    };
     use glib::Properties;
+
+    use crate::CSS_STYLE;
 
     use super::*;
 
@@ -76,6 +90,8 @@ mod imp {
         pub top_reveal: RefCell<bool>,
         #[property(get, set)]
         pub right_reveal: RefCell<bool>,
+        #[property(get, set)]
+        pub launcher_reveal: RwLock<bool>,
     }
 
     #[glib::object_subclass]
@@ -92,28 +108,37 @@ mod imp {
             let obj = self.obj();
 
             match msg {
+                "launcher" => {
+                    // change order depending on the current state
+                    if obj.launcher_reveal() {
+                        obj.disable_launcher();
+                    } else {
+                        if let Err(e) = obj.toggle_window("Launcher") {
+                            eprintln!("Launcher Error: {}", e);
+                        }
+                        let window = obj.window("Launcher").unwrap();
+                        window.set_width_request(500);
+                        window.set_default_width(500);
+                        obj.set_launcher_reveal(!obj.launcher_reveal());
+                    }
+                }
                 "toggle top" => {
                     obj.set_top_reveal(!obj.top_reveal());
-                    Ok(())
                 }
                 "toggle right" => {
                     obj.set_right_reveal(!obj.right_reveal());
-                    Ok(())
                 }
                 "toggle all" => {
                     obj.set_top_reveal(!obj.top_reveal());
                     obj.set_right_reveal(!obj.right_reveal());
-                    Ok(())
                 }
                 "on all" => {
                     obj.set_top_reveal(true);
                     obj.set_right_reveal(true);
-                    Ok(())
                 }
                 "off all" => {
                     obj.set_top_reveal(false);
                     obj.set_right_reveal(false);
-                    Ok(())
                 }
                 msg => {
                     write_sock(conn, msg, |res| {
@@ -121,9 +146,14 @@ mod imp {
                             eprintln!("Error: {}", err);
                         }
                     });
-                    Ok(())
+                    return Ok(());
                 }
             }
+
+            // force refresh css
+            self.obj().apply_css(CSS_STYLE, false);
+
+            Ok(())
         }
     }
     impl GtkApplicationImpl for App {}
@@ -135,6 +165,7 @@ mod imp {
             self.parent_constructed();
             self.obj().set_top_reveal(false);
             self.obj().set_right_reveal(false);
+            self.obj().set_launcher_reveal(false);
         }
     }
 }

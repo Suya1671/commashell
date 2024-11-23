@@ -1,5 +1,7 @@
 mod app;
+mod app_entry;
 mod cava;
+mod launcher;
 mod notification;
 mod notifications;
 mod right;
@@ -14,6 +16,7 @@ use config::{APP_ID, RESOURCES_BYTES, RESOURCES_PATH};
 use gtk::glib::clone;
 use gtk::prelude::*;
 use gtk::{gio, glib};
+use launcher::Launcher;
 use top::Top;
 #[rustfmt::skip]
 mod config;
@@ -60,6 +63,9 @@ fn main() -> glib::ExitCode {
 
                 let notifications = notifications::Notifications::new(&app, monitor);
                 app.add_window(&notifications);
+
+                let launcher = Launcher::new(&app, monitor);
+                app.add_window(&launcher);
             }
 
             app.apply_css(CSS_STYLE, false);

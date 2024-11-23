@@ -1,0 +1,49 @@
+using Gtk 4.0;
+using Gtk 4.0;
+using Adw 1;
+
+template $Launcher: Adw.Window {
+    title: "Launcher";
+    width-request: 1;
+    height-request: 1;
+    default-height: 1;
+    default-width: 1;
+
+    styles [
+        "launcher"
+    ]
+
+    Revealer {
+        reveal-child: bind template.reveal;
+        transition-type: slide_up;
+        transition-duration: 200;
+        width-request: 500;
+
+        Box {
+            orientation: vertical;
+            spacing: 12;
+            height-request: 500;
+            width-request: 500;
+
+            styles [
+                "inner"
+            ]
+
+            Entry entry {
+                height-request: 50;
+                placeholder-text: "Search...";
+                secondary-icon-name: "search-symbolic";
+                changed => $on_search_change() swapped;
+                activate => $on_search_activate() swapped;
+            }
+
+            ScrolledWindow {
+                hscrollbar-policy: never;
+                width-request: 500;
+                height-request: 500;
+
+                ListBox list {}
+            }
+        }
+    }
+}

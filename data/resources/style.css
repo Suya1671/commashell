@@ -160,3 +160,23 @@
 .notification .actions:last-child {
   margin-right: 0;
 }
+
+.notification .image {
+  margin-right: 1rem;
+  border-radius: 16px;
+}
+
+.launcher {
+  border-radius: 12px;
+  border: 2px solid var(--accent-color);
+  padding: 1rem;
+}
+
+.app-entry {
+  background: var(--dialog-bg-color);
+  min-height: 50px;
+}
+
+.app-icon {
+  margin-right: 1rem;
+}
