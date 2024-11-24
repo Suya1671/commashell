@@ -18,6 +18,18 @@
   padding-right: 1rem;
 }
 
+.wallpaper-image {
+  border-radius: 8px;
+}
+
+.wallpaper-list > *:hover {
+  background: inherit;
+}
+
+.wallpapers > .title-1 {
+  margin-top: 1rem;
+}
+
 /* right */
 .right {
   margin-top: 1rem;
@@ -74,6 +86,10 @@
   background: rgb(0 0 0 / 0.01);
 }
 
+.notifications-container > *:hover {
+  background: inherit;
+}
+
 .notifications-container:first-child {
   margin-top: 1rem;
 }
@@ -99,7 +115,7 @@
 }
 
 .critical.notification-container {
-  background: red;
+  background: var(--accent-red);
 }
 
 .notification .header {

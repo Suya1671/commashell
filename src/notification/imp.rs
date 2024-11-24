@@ -2,7 +2,6 @@ use std::cell::RefCell;
 
 use astal_notifd::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::glib::property::PropertyGet;
 use gtk::glib::Properties;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;

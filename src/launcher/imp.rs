@@ -1,19 +1,16 @@
 use std::cell::RefCell;
-use std::cmp::min;
-use std::process::Command;
 
 use adw::subclass::window::AdwWindowImpl;
-use astal_apps::prelude::{ApplicationExt, AppsExt};
 use astal_apps::Apps;
 use glib::subclass::InitializingObject;
-use gtk::glib::property::PropertyGet;
 use gtk::glib::Properties;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, gio, prelude::*};
+use gtk::{gio, prelude::*};
 use gtk::{glib, CompositeTemplate};
 
 use crate::app::App;
-use crate::app_entry::AppEntry;
+
+use super::launchers::{FuzzyAppSearch, Launcher as LauncherTrait, Qalculate, Thino};
 
 #[derive(CompositeTemplate, Properties, Default, Debug)]
 #[template(resource = "/in/wobbl/commashell/ui/launcher.ui")]
@@ -21,7 +18,6 @@ use crate::app_entry::AppEntry;
 pub struct Launcher {
     #[property(get, set, type = bool)]
     pub reveal: RefCell<bool>,
-    pub app_entries: RefCell<Option<gio::ListStore>>,
     #[property(get, set, nullable)]
     pub application: RefCell<Option<App>>,
     #[property(get)]
@@ -30,6 +26,7 @@ pub struct Launcher {
     pub entry: TemplateChild<gtk::Entry>,
     #[template_child]
     pub list: TemplateChild<gtk::ListBox>,
+    pub app_entries: RefCell<Option<gio::ListStore>>,
 }
 
 #[glib::object_subclass]
@@ -49,57 +46,46 @@ impl ObjectSubclass for Launcher {
     }
 }
 
-// about the limit for what ListBoxes can handle
-const MAX_ITEMS: usize = 200;
-
 #[gtk::template_callbacks]
 impl Launcher {
     #[template_callback]
     fn on_search_change(&self, entry: &gtk::Entry) {
         let model = self.obj().app_entries();
         model.remove_all();
+
         let text = entry.text();
+        let application = self.obj().application().as_ref().unwrap().clone();
 
-        // calc
-        if let Some(text) = text.strip_prefix("= ") {
-            // run qalculate on the remaining text
-            let result = Command::new("qalc")
-                .arg(text)
-                .output()
-                .expect("failed to execute process");
-
-            let output = String::from_utf8(result.stdout).unwrap();
-            let output = output.trim_end();
-
-            let application = self.obj().application().as_ref().unwrap().clone();
-
-            let output = gtk::Button::with_label(&output);
-            output.add_css_class("app-entry");
-            output.set_valign(gtk::Align::Center);
-            output
-                .child()
-                .unwrap()
-                .downcast::<gtk::Label>()
-                .unwrap()
-                .set_wrap(true);
-
-            output.connect_clicked(move |button| {
-                application.disable_launcher();
-
-                let display = gdk::Display::default().unwrap();
-                let clipboard = display.clipboard();
-                clipboard.set_text(&button.label().unwrap());
-            });
-            model.append(&output);
-        } else {
-            // fuzzy search
-            let list = self.apps.fuzzy_query(Some(&text));
-            let slice = &list[..min(MAX_ITEMS, list.len())];
-            let application = self.obj().application().as_ref().unwrap().clone();
-            for app in slice {
-                let app = AppEntry::new(app, &application);
-                model.append(&app);
+        // TODO: configurable set of launchers
+        fn launch_if_can<L: LauncherTrait>(
+            model: &gio::ListStore,
+            launcher: L,
+            text: &str,
+        ) -> bool {
+            if launcher.can_launch(text) {
+                let widgets = launcher.launch(text);
+                for widget in widgets {
+                    model.append(&widget);
+                }
+                true
+            } else {
+                false
             }
+        }
+
+        let calc = Qalculate::new(application.clone());
+        if launch_if_can(&model, calc, &text) {
+            return;
+        }
+
+        let thino = Thino::new(application.clone());
+        if launch_if_can(&model, thino, &text) {
+            return;
+        }
+
+        let fuzzy_search = FuzzyAppSearch::new(application.clone(), self.obj().apps());
+        if launch_if_can(&model, fuzzy_search, &text) {
+            return;
         }
     }
 

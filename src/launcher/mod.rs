@@ -1,17 +1,17 @@
-use astal_apps::prelude::ApplicationExt;
 use gtk::{
     gdk::Monitor,
     gio,
     glib::{self, Object},
-    prelude::{GtkWindowExt, MonitorExt, ObjectExt},
+    prelude::{MonitorExt, ObjectExt},
     subclass::prelude::ObjectSubclassIsExt,
 };
 use gtk4_layer_shell::{Edge, LayerShell};
 use vte4::{Cast, EditableExt, WidgetExt};
 
-use crate::{app::App, app_entry::AppEntry};
+use crate::app::App;
 
 mod imp;
+mod launchers;
 
 glib::wrapper! {
     pub struct Launcher(ObjectSubclass<imp::Launcher>)

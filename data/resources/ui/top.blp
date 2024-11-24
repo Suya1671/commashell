@@ -23,7 +23,53 @@ template $Top: Adw.Window {
                 "inner"
             ]
 
-            start-widget: Adw.Spinner {};
+            start-widget: Box {
+                orientation: horizontal;
+
+                styles [
+                    "left"
+                ]
+
+                MenuButton {
+                    icon-name: "preferences-desktop-wallpaper-symbolic";
+
+                    popover: Popover {
+                        styles [
+                            "menu"
+                        ]
+
+                        child: Box {
+                            orientation: vertical;
+
+                            styles [
+                                "wallpapers"
+                            ]
+
+                            Label {
+                                label: "Wallpapers";
+                                halign: center;
+                                justify: center;
+
+                                styles [
+                                    "title-1"
+                                ]
+                            }
+
+                            ScrolledWindow {
+                                hscrollbar-policy: never;
+                                width-request: 512;
+                                height-request: 512;
+
+                                ListBox wallpaper_items {
+                                    styles [
+                                        "wallpaper-list"
+                                    ]
+                                }
+                            }
+                        };
+                    };
+                }
+            };
 
             center-widget: Box {
                 orientation: horizontal;

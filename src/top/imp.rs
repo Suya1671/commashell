@@ -3,8 +3,8 @@ use std::cell::RefCell;
 use adw::subclass::window::AdwWindowImpl;
 use glib::subclass::InitializingObject;
 use gtk::glib::Properties;
-use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use gtk::{gio, prelude::*};
 use gtk::{glib, CompositeTemplate};
 
 #[derive(CompositeTemplate, Properties, Default, Debug)]
@@ -17,6 +17,9 @@ pub struct Top {
     pub time: RefCell<String>,
     #[property(get, set, type = bool)]
     pub reveal: RefCell<bool>,
+    #[template_child]
+    pub wallpaper_items: TemplateChild<gtk::ListBox>,
+    pub wallpaper_entries: RefCell<Option<gio::ListStore>>,
 }
 
 #[glib::object_subclass]
@@ -36,7 +39,16 @@ impl ObjectSubclass for Top {
 }
 
 #[glib::derived_properties]
-impl ObjectImpl for Top {}
+impl ObjectImpl for Top {
+    fn constructed(&self) {
+        // Call "constructed" on parent
+        self.parent_constructed();
+
+        // Setup
+        let obj = self.obj();
+        obj.setup_wallpaper_entries();
+    }
+}
 
 impl AdwWindowImpl for Top {}
 impl WindowImpl for Top {}

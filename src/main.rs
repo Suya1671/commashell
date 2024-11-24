@@ -50,6 +50,8 @@ fn main() -> glib::ExitCode {
         Err(err) => eprintln!("Registration error, {}", err),
     }
 
+    app.apply_css(CSS_STYLE, false);
+
     app.connect_activate(clone!(
         #[strong]
         app,
@@ -67,8 +69,6 @@ fn main() -> glib::ExitCode {
                 let launcher = Launcher::new(&app, monitor);
                 app.add_window(&launcher);
             }
-
-            app.apply_css(CSS_STYLE, false);
         }
     ));
 

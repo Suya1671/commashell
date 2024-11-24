@@ -72,7 +72,7 @@ impl AppBuilder {
 mod imp {
     use std::{cell::RefCell, sync::RwLock};
 
-    use astal::prelude::{ApplicationExt as AstalApplicationExt, *};
+    use astal::prelude::ApplicationExt as AstalApplicationExt;
     use astal_io::{
         functions::write_sock, prelude::ApplicationExt as AstalIOApplicationExt,
         subclass::prelude::AstalIOApplicationImpl,
