@@ -123,10 +123,10 @@ impl Top {
                 };
 
                 self.set_weather_temp(temp.value as f32);
-                self.set_desc(weather.current_condition().desc().trim_end().trim());
+                self.set_weather_desc(weather.current_condition().desc().trim_end().trim());
                 self.set_weather_temp_min(temp.min as f32);
                 self.set_weather_temp_max(temp.max as f32);
-                self.set_weather_desc(desc);
+                self.set_weather_temp_desc(desc);
                 self.set_location(location);
                 self.set_feels_like(format!(
                     "Feels like {}°C",

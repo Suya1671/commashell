@@ -26,7 +26,7 @@ pub struct Top {
     pub weather_temp_max: RefCell<f32>,
 
     #[property(get, set)]
-    pub weather_desc: RefCell<String>,
+    pub weather_temp_desc: RefCell<String>,
     #[property(get, set)]
     pub weather_icon: RefCell<String>,
 
@@ -34,7 +34,7 @@ pub struct Top {
     pub location: RefCell<String>,
 
     #[property(get, set)]
-    pub desc: RefCell<String>,
+    pub weather_desc: RefCell<String>,
     #[property(get, set)]
     pub feels_like: RefCell<String>,
     #[property(get, set)]
