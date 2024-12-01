@@ -1,6 +1,7 @@
 use std::{path::PathBuf, process::Command};
 
 use astal_io::{prelude::VariableExt, Variable};
+use futures_util::StreamExt;
 use gtk::{
     gdk::Monitor,
     gio::{self},
@@ -10,10 +11,12 @@ use gtk::{
 };
 use gtk4_layer_shell::{Edge, LayerShell};
 use vte4::{ButtonExt, Cast, WidgetExt};
+use weather::WeatherService;
 
-use crate::app::App;
+use crate::{app::App, TOKIO_RUNTIME};
 
 mod imp;
+mod weather;
 
 glib::wrapper! {
     pub struct Top(ObjectSubclass<imp::Top>)
@@ -77,7 +80,81 @@ impl Top {
 
         current.present();
 
+        glib::spawn_future_local(glib::clone!(
+            #[weak]
+            current,
+            async move {
+                // every 1 hour
+                let mut stream = glib::interval_stream(std::time::Duration::from_secs(1 * 60 * 60));
+                // TODO: configurable weather location
+                let weather = weather::WeatherService::new();
+
+                current.update_weather(&weather).await;
+
+                while let Some(_) = stream.next().await {
+                    current.update_weather(&weather).await;
+                }
+            }
+        ));
+
         current
+    }
+
+    async fn update_weather(&self, weather: &WeatherService) {
+        let weather = TOKIO_RUNTIME.block_on(weather.get_weather());
+        match weather {
+            Ok(weather) => {
+                let temp = weather.temperature_slider();
+                // TODO: configurable icon path
+                let desc = weather
+                    .current_condition()
+                    .temperature(weather::TemperatureUnit::Celsius);
+                let icon = weather.weather_icon();
+                let location = weather.nearest_area().location();
+
+                let uv_index = weather.current_condition().uv_index();
+                let uv_index_color = match uv_index {
+                    0..=2 => "green",
+                    3..=5 => "yellow",
+                    6..=7 => "orange",
+                    8..=10 => "red",
+                    11..=12 => "purple",
+                    _ => "black",
+                };
+
+                self.set_weather_temp(temp.value as f32);
+                self.set_desc(weather.current_condition().desc().trim_end().trim());
+                self.set_weather_temp_min(temp.min as f32);
+                self.set_weather_temp_max(temp.max as f32);
+                self.set_weather_desc(desc);
+                self.set_location(location);
+                self.set_feels_like(format!(
+                    "Feels like {}°C",
+                    weather.current_condition().feels_like()
+                ));
+                self.set_uv(format!(
+                    r#"UV Index: <span color="{}">{}</span>"#,
+                    uv_index_color, uv_index
+                ));
+                self.set_cloud_cover(format!(
+                    "Cloud cover: {}%",
+                    weather.current_condition().cloud_cover()
+                ));
+                self.set_humidity(format!(
+                    "Humidity: {}%",
+                    weather.current_condition().humidity()
+                ));
+
+                self.set_weather_icon(match icon {
+                    Ok(icon) => icon,
+                    Err(e) => {
+                        eprintln!("Failed to get weather icon for code {e}");
+                        "question-round-outlined-symbolic"
+                    }
+                });
+            }
+            Err(e) => eprintln!("Failed to get weather: {:?}", e),
+        }
     }
 
     fn wallpaper_entries(&self) -> gio::ListStore {

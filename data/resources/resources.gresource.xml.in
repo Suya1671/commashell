@@ -24,5 +24,36 @@
     <file
       preprocess="xml-stripblanks"
       alias="skip-forward-large-symbolic.svg">icons/skip-forward-large-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+      alias="question-round-outline-symbolic.svg">icons/question-round-outline-symbolic.svg</file>
+
+    <file
+      preprocess="xml-stripblanks"
+      alias="clouds-outline-symbolic.svg">icons/clouds-outline-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+      alias="few-clouds-outline-symbolic.svg">icons/few-clouds-outline-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+      alias="fog-symbolic.svg">icons/fog-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+      alias="moon-clouds-outline-symbolic.svg">icons/moon-clouds-outline-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+      alias="moon-outline-symbolic.svg">icons/moon-outline-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+      alias="rain-symbolic.svg">icons/rain-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+      alias="snow-symbolic.svg">icons/snow-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+      alias="storm-outline-symbolic.svg">icons/storm-outline-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+      alias="sun-outline-symbolic.svg">icons/sun-outline-symbolic.svg</file>
   </gresource>
 </gresources>

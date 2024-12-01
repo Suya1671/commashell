@@ -9,7 +9,7 @@
   padding: 0.5rem 1rem;
 }
 
-.top .center {
+.top .center .time {
   background-color: var(--accent-bg-color);
   color: var(--accent-fg-color);
 
@@ -195,4 +195,12 @@
 
 .app-icon {
   margin-right: 1rem;
+}
+
+.weather .menu .weather {
+  padding: 1rem;
+}
+
+.weather-icon-image {
+  color: var(--accent-color);
 }

@@ -11,14 +11,44 @@ use gtk::{glib, CompositeTemplate};
 #[template(resource = "/in/wobbl/commashell/ui/top.ui")]
 #[properties(wrapper_type = super::Top)]
 pub struct Top {
-    #[property(get, set, type = String)]
+    #[property(get, set)]
     pub main_text: RefCell<String>,
-    #[property(get, set, type = String)]
+    #[property(get, set)]
     pub time: RefCell<String>,
-    #[property(get, set, type = bool)]
+    #[property(get, set)]
     pub reveal: RefCell<bool>,
+
+    #[property(get, set)]
+    pub weather_temp: RefCell<f32>,
+    #[property(get, set)]
+    pub weather_temp_min: RefCell<f32>,
+    #[property(get, set)]
+    pub weather_temp_max: RefCell<f32>,
+
+    #[property(get, set)]
+    pub weather_desc: RefCell<String>,
+    #[property(get, set)]
+    pub weather_icon: RefCell<String>,
+
+    #[property(get, set)]
+    pub location: RefCell<String>,
+
+    #[property(get, set)]
+    pub desc: RefCell<String>,
+    #[property(get, set)]
+    pub feels_like: RefCell<String>,
+    #[property(get, set)]
+    pub cloud_cover: RefCell<String>,
+    #[property(get, set)]
+    pub humidity: RefCell<String>,
+    #[property(get, set)]
+    pub uv: RefCell<String>,
+
     #[template_child]
     pub wallpaper_items: TemplateChild<gtk::ListBox>,
+    #[template_child]
+    pub hourly_weather: TemplateChild<gtk::ListBox>,
+
     pub wallpaper_entries: RefCell<Option<gio::ListStore>>,
 }
 

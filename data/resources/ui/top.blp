@@ -78,13 +78,199 @@ template $Top: Adw.Window {
                     "center"
                 ]
 
-                Label {
-                    label: bind template.time;
+                spacing: 12;
+
+                Box {
+                    styles [
+                        "time"
+                    ]
+
+                    Label {
+                        label: bind template.time;
+                    }
+                }
+
+                MenuButton {
+                    styles [
+                        "weather"
+                    ]
+
+                    child: Box {
+                        orientation: horizontal;
+
+                        styles [
+                            "menu-content"
+                        ]
+
+                        spacing: 6;
+
+                        Image {
+                            valign: center;
+                            icon-name: bind template.weather_icon;
+                            icon-size: normal;
+                        }
+
+                        LevelBar {
+                            valign: center;
+                            value: bind template.weather_temp;
+                            min-value: bind template.weather_temp_min;
+                            max-value: bind template.weather_temp_max;
+                            width-request: 64;
+                        }
+
+                        Label {
+                            label: bind template.weather_desc;
+                        }
+                    };
+
+                    popover: Popover {
+                        styles [
+                            "menu"
+                        ]
+
+                        child: Box {
+                            orientation: vertical;
+
+                            styles [
+                                "weather"
+                            ]
+
+                            spacing: 8;
+
+                            Label {
+                                label: bind template.location;
+                                halign: start;
+                                justify: left;
+
+                                styles [
+                                    "title-1"
+                                ]
+                            }
+
+                            Box {
+                                orientation: horizontal;
+
+                                styles [
+                                    "weather-details"
+                                ]
+
+                                spacing: 16;
+
+                                Box {
+                                    orientation: vertical;
+                                    spacing: 8;
+
+                                    Image {
+                                        icon-name: bind template.weather_icon;
+                                        pixel-size: 128;
+
+                                        styles [
+                                            "weather-icon-image"
+                                        ]
+                                    }
+
+                                    Label {
+                                        label: bind template.desc;
+                                        halign: center;
+                                        justify: center;
+
+                                        styles [
+                                            "subtitle"
+                                        ]
+                                    }
+                                }
+
+                                Box {
+                                    orientation: vertical;
+
+                                    Label {
+                                        label: bind template.weather_desc;
+                                        halign: start;
+                                        justify: left;
+
+                                        styles [
+                                            "title-2"
+                                        ]
+                                    }
+
+                                    Label {
+                                        label: bind template.feels_like;
+                                        halign: start;
+                                        justify: left;
+
+                                        styles [
+                                            "title-3"
+                                        ]
+                                    }
+
+                                    Separator {
+                                        styles [
+                                            "spacer"
+                                        ]
+                                    }
+
+                                    Label {
+                                        label: bind template.humidity;
+                                        halign: start;
+                                        justify: left;
+                                        wrap: true;
+                                        use-markup: true;
+
+                                        styles [
+                                            "subtitle"
+                                        ]
+                                    }
+
+                                    Label {
+                                        label: bind template.cloud_cover;
+                                        halign: start;
+                                        justify: left;
+                                        wrap: true;
+                                        use-markup: true;
+
+                                        styles [
+                                            "subtitle"
+                                        ]
+                                    }
+
+                                    Label {
+                                        label: bind template.uv;
+                                        halign: start;
+                                        justify: left;
+                                        wrap: true;
+                                        use-markup: true;
+
+                                        styles [
+                                            "subtitle"
+                                        ]
+                                    }
+                                }
+                            }
+
+                            // TODO: hourly info
+                            ScrolledWindow {
+                                vscrollbar-policy: never;
+                                // width-request: 512;
+                                // height-request: 512;
+                                ListBox hourly_weather {
+                                    styles [
+                                        "hourly-weather"
+                                    ]
+                                }
+                            }
+                        };
+                    };
                 }
             };
 
-            end-widget: Button button {
-                label: _("Click me!");
+            end-widget: Box {
+                orientation: horizontal;
+
+                styles [
+                    "right"
+                ]
+
+                // TODO: various gagues for cpu, ram, etc
             };
         }
     }

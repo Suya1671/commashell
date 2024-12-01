@@ -17,6 +17,7 @@ use gtk::glib::clone;
 use gtk::prelude::*;
 use gtk::{gio, glib};
 use launcher::Launcher;
+use tokio::sync::mpsc;
 use top::Top;
 #[rustfmt::skip]
 mod config;
@@ -38,10 +39,11 @@ fn main() -> glib::ExitCode {
     adw::init().expect("To initialize Adwaita");
 
     // Create a new application
+    let (sender, reciever) = mpsc::channel(5);
     let app = App::builder()
         .application_id(APP_ID)
         .resource_base_path(RESOURCES_PATH)
-        .build();
+        .build(reciever, sender);
 
     app.acquire_socket().expect("To acquire socket");
 

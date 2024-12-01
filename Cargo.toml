@@ -22,3 +22,10 @@ astal-notifd = { path = "./astal-rs/notifd" }
 astal-apps = { path = "./astal-rs/apps" }
 gtk4-layer-shell = "0.4.0"
 vte4 = { version = "0.8.0", features = ["v0_78"] }
+reqwest = { version = "0.12.9", default-features = false, features = [
+    "json",
+    "rustls-tls",
+] }
+serde = { version = "1.0.215", features = ["derive"] }
+futures-util = "0.3.31"
+chrono = "0.4.38"
