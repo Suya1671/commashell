@@ -204,3 +204,17 @@
 .weather-icon-image {
   color: var(--accent-color);
 }
+
+.daily-weather-entry {
+  background: var(--window-bg-color);
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+.weather-details {
+  padding: 1rem;
+  border-radius: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--window-bg-color);
+}

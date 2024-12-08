@@ -17,6 +17,8 @@ impl WeatherService {
     }
 }
 
+// I would like to congratulate wttr.in for having the most cursed naming scheme I have ever seen
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct Wttr {
     current_condition: Vec<CurrentCondition>,
@@ -193,25 +195,56 @@ pub struct Request {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Weather {
-    pub astronomy: Vec<Astronomy>,
+    astronomy: Vec<Astronomy>,
     #[serde(rename = "avgtempC")]
-    pub avg_temp_c: String,
+    avg_temp_c: String,
     #[serde(rename = "avgtempF")]
-    pub avg_temp_f: String,
-    pub date: String,
-    pub hourly: Vec<Hourly>,
+    avg_temp_f: String,
+    date: String,
+    hourly: Vec<Hourly>,
     #[serde(rename = "maxtempC")]
-    pub max_temp_c: String,
+    max_temp_c: String,
     #[serde(rename = "maxtempF")]
-    pub max_temp_f: String,
+    max_temp_f: String,
     #[serde(rename = "mintempC")]
-    pub min_temp_c: String,
+    min_temp_c: String,
     #[serde(rename = "mintempF")]
-    pub min_temp_f: String,
-    pub sun_hour: String,
+    min_temp_f: String,
+    sun_hour: String,
     #[serde(rename = "totalSnow_cm")]
-    pub total_snow_cm: String,
-    pub uv_index: String,
+    total_snow_cm: String,
+    uv_index: String,
+}
+
+impl Weather {
+    pub fn hourly(&self) -> &[Hourly] {
+        &self.hourly
+    }
+
+    pub fn temperature_slider(&self) -> TemperatureSlider {
+        let current_temp = self.avg_temp_c.parse::<f64>().unwrap();
+        let min_temp = self.min_temp_c.parse::<f64>().unwrap();
+        let max_temp = self.max_temp_c.parse::<f64>().unwrap();
+
+        TemperatureSlider {
+            min: min_temp,
+            max: max_temp,
+            value: current_temp,
+        }
+    }
+
+    pub fn desc(&self) -> &str {
+        &self.hourly[0].weather_desc[0].value
+    }
+
+    pub fn icon(&self) -> Result<&str, &str> {
+        let night = false;
+        weather_icon_from_wwo_code(&self.hourly[0].weather_code, night)
+    }
+
+    pub fn date(&self) -> chrono::NaiveDate {
+        chrono::NaiveDate::parse_from_str(&self.date, "%Y-%m-%d").unwrap()
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -228,68 +261,133 @@ pub struct Astronomy {
 #[serde(rename_all = "camelCase")]
 pub struct Hourly {
     #[serde(rename = "DewPointC")]
-    pub dew_point_c: String,
+    dew_point_c: String,
     #[serde(rename = "DewPointF")]
-    pub dew_point_f: String,
+    dew_point_f: String,
     #[serde(rename = "FeelsLikeC")]
-    pub feels_like_c: String,
+    feels_like_c: String,
     #[serde(rename = "FeelsLikeF")]
-    pub feels_like_f: String,
+    feels_like_f: String,
     #[serde(rename = "HeatIndexC")]
-    pub heat_index_c: String,
+    heat_index_c: String,
     #[serde(rename = "HeatIndexF")]
-    pub heat_index_f: String,
+    heat_index_f: String,
     #[serde(rename = "WindChillC")]
-    pub wind_chill_c: String,
+    wind_chill_c: String,
     #[serde(rename = "WindChillF")]
-    pub wind_chill_f: String,
+    wind_chill_f: String,
     #[serde(rename = "WindGustKmph")]
-    pub wind_gust_kmph: String,
+    wind_gust_kmph: String,
     #[serde(rename = "WindGustMiles")]
-    pub wind_gust_miles: String,
+    wind_gust_miles: String,
     #[serde(rename = "chanceoffog")]
-    pub chance_of_fog: String,
+    chance_of_fog: String,
     #[serde(rename = "chanceoffrost")]
-    pub chance_of_frost: String,
+    chance_of_frost: String,
     #[serde(rename = "chanceofhightemp")]
-    pub chance_of_high_temp: String,
+    chance_of_high_temp: String,
     #[serde(rename = "chanceofovercast")]
-    pub chance_of_overcast: String,
+    chance_of_overcast: String,
     #[serde(rename = "chanceofrain")]
-    pub chance_of_rain: String,
+    chance_of_rain: String,
     #[serde(rename = "chanceofremdry")]
-    pub chance_of_remdry: String,
+    chance_of_remdry: String,
     #[serde(rename = "chanceofsnow")]
-    pub chance_of_snow: String,
+    chance_of_snow: String,
     #[serde(rename = "chanceofsunshine")]
-    pub chance_of_sunshine: String,
+    chance_of_sunshine: String,
     #[serde(rename = "chanceofthunder")]
-    pub chance_of_thunder: String,
+    chance_of_thunder: String,
     #[serde(rename = "chanceofwindy")]
-    pub chance_of_windy: String,
+    chance_of_windy: String,
     #[serde(rename = "cloudcover")]
-    pub cloud_cover: String,
-    pub diff_rad: String,
-    pub humidity: String,
-    pub precip_inches: String,
+    cloud_cover: String,
+    diff_rad: String,
+    humidity: String,
+    precip_inches: String,
     #[serde(rename = "precipMM")]
-    pub precip_mm: String,
-    pub pressure: String,
-    pub pressure_inches: String,
-    pub short_rad: String,
-    pub temp_c: String,
-    pub temp_f: String,
-    pub time: String,
-    pub uv_index: String,
-    pub visibility: String,
-    pub visibility_miles: String,
-    pub weather_code: String,
-    pub weather_desc: Vec<WeatherDesc>,
-    pub weather_icon_url: Vec<WeatherDesc>,
-    pub winddir16_point: String,
-    pub winddir_degree: String,
-    pub windspeed_kmph: String,
-    pub windspeed_miles: String,
+    precip_mm: String,
+    pressure: String,
+    pressure_inches: String,
+    short_rad: String,
+    temp_c: String,
+    temp_f: String,
+    time: String,
+    uv_index: String,
+    visibility: String,
+    visibility_miles: String,
+    weather_code: String,
+    weather_desc: Vec<WeatherDesc>,
+    weather_icon_url: Vec<WeatherDesc>,
+    winddir16_point: String,
+    winddir_degree: String,
+    windspeed_kmph: String,
+    windspeed_miles: String,
+}
+
+impl Hourly {
+    pub fn temperature(&self, unit: TemperatureUnit) -> String {
+        match unit {
+            TemperatureUnit::Celsius => format!("{}°C", &self.temp_c),
+            TemperatureUnit::Fahrenheit => format!("{}°F", &self.temp_f),
+        }
+    }
+
+    pub fn temperature_slider(&self, weather: &Weather) -> TemperatureSlider {
+        let temp = self.temp_c.parse::<f64>().unwrap();
+        let min_temp = weather.min_temp_c.parse::<f64>().unwrap();
+        let max_temp = weather.max_temp_c.parse::<f64>().unwrap();
+
+        TemperatureSlider {
+            min: min_temp,
+            max: max_temp,
+            value: temp,
+        }
+    }
+
+    pub fn humidity(&self) -> &str {
+        &self.humidity
+    }
+
+    pub fn cloud_cover(&self) -> u8 {
+        self.cloud_cover.parse().unwrap()
+    }
+
+    pub fn uv_index(&self) -> u8 {
+        self.uv_index.parse().unwrap()
+    }
+
+    pub fn desc(&self) -> &str {
+        &self.weather_desc[0].value.trim()
+    }
+
+    /// time is millitary style time. E.g. 0 = 12:00 AM, 300 = 3:00 AM, 1200 = 12:00 PM
+    pub fn time_str(&self) -> &str {
+        &self.time
+    }
+
+    pub fn time(&self) -> chrono::NaiveTime {
+        let time_str = format!("{:0>4}", self.time_str());
+        chrono::NaiveTime::parse_from_str(&time_str, "%H%M").unwrap()
+    }
+
+    /// Weather: the weather day this hourly forecast belongs to
+    pub fn icon(&self, weather: &Weather) -> Result<&str, &str> {
+        let night = {
+            // format: HH:MM AM/PM
+            let sunrise = &weather.astronomy[0].sunrise;
+            let sunset = &weather.astronomy[0].sunset;
+            // change to 24 hour format
+            let sunrise = chrono::NaiveTime::parse_from_str(&sunrise, "%I:%M %p").unwrap();
+            let sunset = chrono::NaiveTime::parse_from_str(&sunset, "%I:%M %p").unwrap();
+
+            let time = self.time();
+
+            time < sunrise || time > sunset
+        };
+
+        weather_icon_from_wwo_code(&self.weather_code, night)
+    }
 }
 
 fn weather_icon_from_wwo_code(code: &str, night: bool) -> Result<&str, &str> {

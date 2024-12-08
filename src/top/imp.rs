@@ -47,9 +47,10 @@ pub struct Top {
     #[template_child]
     pub wallpaper_items: TemplateChild<gtk::ListBox>,
     #[template_child]
-    pub hourly_weather: TemplateChild<gtk::ListBox>,
+    pub hourly_weather: TemplateChild<gtk::Box>,
 
     pub wallpaper_entries: RefCell<Option<gio::ListStore>>,
+    pub hourly_weather_entries: RefCell<Option<gio::ListStore>>,
 }
 
 #[glib::object_subclass]
@@ -77,6 +78,7 @@ impl ObjectImpl for Top {
         // Setup
         let obj = self.obj();
         obj.setup_wallpaper_entries();
+        obj.setup_hourly_weather_entries();
     }
 }
 

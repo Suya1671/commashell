@@ -4,13 +4,14 @@ use astal_io::{prelude::VariableExt, Variable};
 use futures_util::StreamExt;
 use gtk::{
     gdk::Monitor,
-    gio::{self},
+    gio::{self, prelude::*},
     glib::{self, clone::Downgrade, Closure, Object, SendWeakRef, Value},
-    prelude::{GtkWindowExt, MonitorExt, ObjectExt, ToValue},
-    subclass::prelude::ObjectSubclassIsExt,
+    prelude::*,
+    subclass::prelude::*,
+    LevelBar,
 };
 use gtk4_layer_shell::{Edge, LayerShell};
-use vte4::{ButtonExt, Cast, WidgetExt};
+use wallpaper::WallpaperEntryObject;
 use weather::WeatherService;
 
 use crate::{app::App, TOKIO_RUNTIME};
@@ -152,6 +153,50 @@ impl Top {
                         "question-round-outlined-symbolic"
                     }
                 });
+
+                self.hourly_weather_entries().remove_all();
+
+                for day in weather.weather() {
+                    let temp = day.temperature_slider();
+                    let desc = day.desc();
+                    let icon = day.icon();
+                    let day = day.date();
+
+                    let icon = match icon {
+                        Ok(icon) => icon,
+                        Err(e) => {
+                            eprintln!("Failed to get weather icon for code {e}");
+                            "question-round-outlined-symbolic"
+                        }
+                    };
+
+                    let container = gtk::Box::new(gtk::Orientation::Vertical, 8);
+                    container.add_css_class("daily-weather-entry");
+
+                    let formatted_day = day.format("%-d %b").to_string();
+                    let day_label = gtk::Label::new(Some(&formatted_day));
+                    container.append(&day_label);
+
+                    let icon = gtk::Image::from_icon_name(icon);
+                    icon.set_pixel_size(32);
+                    container.append(&icon);
+
+                    let description_label = gtk::Label::new(Some(&desc));
+                    container.append(&description_label);
+
+                    // TODO: celcius/fahrenheit config
+                    let temperature_slider = gtk::LevelBar::new();
+                    temperature_slider.set_value(temp.value as f64);
+                    temperature_slider.set_min_value(temp.min as f64);
+                    temperature_slider.set_max_value(temp.max as f64);
+                    container.append(&temperature_slider);
+
+                    let temperature_label =
+                        gtk::Label::new(Some(format!("{}°C / {}°C", temp.min, temp.max).as_str()));
+                    container.append(&temperature_label);
+
+                    self.hourly_weather_entries().append(&container);
+                }
             }
             Err(e) => eprintln!("Failed to get weather: {:?}", e),
         }
@@ -163,6 +208,38 @@ impl Top {
             .borrow()
             .clone()
             .expect("Wallpaper entries not set")
+    }
+
+    fn hourly_weather_entries(&self) -> gio::ListStore {
+        self.imp()
+            .hourly_weather_entries
+            .borrow()
+            .clone()
+            .expect("Hourly weather entries not set")
+    }
+
+    fn setup_hourly_weather_entries(&self) {
+        let model = gio::ListStore::new::<gtk::Widget>();
+
+        self.imp()
+            .hourly_weather_entries
+            .replace(Some(model.clone()));
+
+        // TODO: proper glib object for hourly weather
+        self.hourly_weather_entries()
+            .connect_items_changed(glib::clone!(
+                #[weak(rename_to = current)]
+                self,
+                move |entries, _position, _added, _removed| {
+                    while let Some(child) = current.imp().hourly_weather.first_child() {
+                        current.imp().hourly_weather.remove(&child);
+                    }
+
+                    for item in entries.iter::<gtk::Widget>().filter_map(|item| item.ok()) {
+                        current.imp().hourly_weather.append(&item);
+                    }
+                }
+            ));
     }
 
     fn setup_wallpaper_entries(&self) {
@@ -236,41 +313,45 @@ impl Top {
     }
 }
 
-mod imp_wallpaper {
-    use std::{cell::RefCell, path::PathBuf};
+mod wallpaper {
+    use super::*;
 
-    use gtk::{
-        glib::{self, Properties},
-        prelude::*,
-        subclass::prelude::*,
-    };
-
-    // Object holding the state
-    #[derive(Properties, Default)]
-    #[properties(wrapper_type = super::WallpaperEntryObject)]
-    pub struct WallpaperEntryObject {
-        #[property(get, set)]
-        pub path: RefCell<PathBuf>,
+    glib::wrapper! {
+        pub struct WallpaperEntryObject(ObjectSubclass<imp_wallpaper::WallpaperEntryObject>);
     }
 
-    // The central trait for subclassing a GObject
-    #[glib::object_subclass]
-    impl ObjectSubclass for WallpaperEntryObject {
-        const NAME: &'static str = "WallpaperEntryObject";
-        type Type = super::WallpaperEntryObject;
+    impl WallpaperEntryObject {
+        pub fn new(path: PathBuf) -> Self {
+            glib::Object::builder().property("path", path).build()
+        }
     }
 
-    // Trait shared by all GObjects
-    #[glib::derived_properties]
-    impl ObjectImpl for WallpaperEntryObject {}
-}
+    mod imp_wallpaper {
+        use std::{cell::RefCell, path::PathBuf};
 
-glib::wrapper! {
-    pub struct WallpaperEntryObject(ObjectSubclass<imp_wallpaper::WallpaperEntryObject>);
-}
+        use gtk::{
+            glib::{self, Properties},
+            prelude::*,
+            subclass::prelude::*,
+        };
 
-impl WallpaperEntryObject {
-    pub fn new(path: PathBuf) -> Self {
-        glib::Object::builder().property("path", path).build()
+        // Object holding the state
+        #[derive(Properties, Default)]
+        #[properties(wrapper_type = super::WallpaperEntryObject)]
+        pub struct WallpaperEntryObject {
+            #[property(get, set)]
+            pub path: RefCell<PathBuf>,
+        }
+
+        // The central trait for subclassing a GObject
+        #[glib::object_subclass]
+        impl ObjectSubclass for WallpaperEntryObject {
+            const NAME: &'static str = "WallpaperEntryObject";
+            type Type = super::WallpaperEntryObject;
+        }
+
+        // Trait shared by all GObjects
+        #[glib::derived_properties]
+        impl ObjectImpl for WallpaperEntryObject {}
     }
 }
