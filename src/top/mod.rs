@@ -4,17 +4,15 @@ use astal_io::{prelude::VariableExt, Variable};
 use futures_util::StreamExt;
 use gtk::{
     gdk::Monitor,
-    gio::{self, prelude::*},
+    gio::{self, prelude::*, Settings, SettingsBindFlags},
     glib::{self, clone::Downgrade, Closure, Object, SendWeakRef, Value},
     prelude::*,
     subclass::prelude::*,
-    LevelBar,
 };
 use gtk4_layer_shell::{Edge, LayerShell};
 use wallpaper::WallpaperEntryObject;
-use weather::WeatherService;
 
-use crate::{app::App, TOKIO_RUNTIME};
+use crate::{app::App, config::APP_ID, TOKIO_RUNTIME};
 
 mod imp;
 mod weather;
@@ -52,6 +50,19 @@ impl Top {
             .bidirectional()
             .build();
 
+        let settings = Settings::new(APP_ID);
+        settings
+            .bind("wallpaper-folder", &current, "wallpaper-folder")
+            .flags(SettingsBindFlags::GET | SettingsBindFlags::SET)
+            .build();
+
+        settings
+            .bind("location", &current, "location")
+            .flags(SettingsBindFlags::GET | SettingsBindFlags::SET)
+            .build();
+
+        current.imp().location_entry.set_text(&current.location());
+
         let time_ref = SendWeakRef::from(Downgrade::downgrade(&time));
 
         time.bind_property("value", &current, "time")
@@ -87,13 +98,10 @@ impl Top {
             async move {
                 // every 1 hour
                 let mut stream = glib::interval_stream(std::time::Duration::from_secs(1 * 60 * 60));
-                // TODO: configurable weather location
-                let weather = weather::WeatherService::new();
-
-                current.update_weather(&weather).await;
+                current.update_weather().await;
 
                 while let Some(_) = stream.next().await {
-                    current.update_weather(&weather).await;
+                    current.update_weather().await;
                 }
             }
         ));
@@ -101,8 +109,10 @@ impl Top {
         current
     }
 
-    async fn update_weather(&self, weather: &WeatherService) {
-        let weather = TOKIO_RUNTIME.block_on(weather.get_weather());
+    async fn update_weather(&self) {
+        let weather =
+            TOKIO_RUNTIME.block_on(self.imp().weather_service.get_weather(&self.location()));
+
         match weather {
             Ok(weather) => {
                 let temp = weather.temperature_slider();
@@ -111,7 +121,6 @@ impl Top {
                     .current_condition()
                     .temperature(weather::TemperatureUnit::Celsius);
                 let icon = weather.weather_icon();
-                let location = weather.nearest_area().location();
 
                 let uv_index = weather.current_condition().uv_index();
                 let uv_index_color = match uv_index {
@@ -128,7 +137,6 @@ impl Top {
                 self.set_weather_temp_min(temp.min as f32);
                 self.set_weather_temp_max(temp.max as f32);
                 self.set_weather_temp_desc(desc);
-                self.set_location(location);
                 self.set_feels_like(format!(
                     "Feels like {}°C",
                     weather.current_condition().feels_like()
@@ -247,33 +255,35 @@ impl Top {
 
         self.imp().wallpaper_entries.replace(Some(model.clone()));
 
-        // TODO: configurable path to wallpapers & file watch
-        let wallpaper_dir = glib::home_dir().join("commafiles/wallpapers");
-        let formats: Vec<_> = gtk::gdk_pixbuf::Pixbuf::formats()
-            .iter()
-            .filter_map(|f| f.name())
-            .collect();
-        let items = std::fs::read_dir(wallpaper_dir)
-            .expect("Expected to read wallpapers directory")
-            .filter_map(Result::ok)
-            .filter_map(|entry| {
-                if entry.file_type().map(|ft| ft.is_file()).unwrap_or_default()
-                    && entry
-                        .path()
-                        .extension()
-                        .map(|ext| formats.iter().any(|f| *ext == **f))
-                        .unwrap_or_default()
-                {
-                    Some(WallpaperEntryObject::new(entry.path()))
-                } else {
-                    None
-                }
-            })
-            .collect::<Vec<_>>();
+        self.connect_wallpaper_folder_notify(|current| {
+            current.wallpaper_entries().remove_all();
 
-        for item in items {
-            self.wallpaper_entries().append(&item);
-        }
+            let wallpaper_dir = current.wallpaper_folder();
+            let formats: Vec<_> = gtk::gdk_pixbuf::Pixbuf::formats()
+                .iter()
+                .filter_map(|f| f.name())
+                .collect();
+
+            if let Ok(dir) = std::fs::read_dir(wallpaper_dir) {
+                let items = dir.filter_map(Result::ok).filter_map(|entry| {
+                    if entry.file_type().map(|ft| ft.is_file()).unwrap_or_default()
+                        && entry
+                            .path()
+                            .extension()
+                            .map(|ext| formats.iter().any(|f| *ext == **f))
+                            .unwrap_or_default()
+                    {
+                        Some(WallpaperEntryObject::new(entry.path()))
+                    } else {
+                        None
+                    }
+                });
+
+                for item in items {
+                    current.wallpaper_entries().append(&item);
+                }
+            }
+        });
 
         self.imp()
             .wallpaper_items
@@ -310,6 +320,8 @@ impl Top {
 
                 button.into()
             });
+
+        self.notify_wallpaper_folder();
     }
 }
 

@@ -99,7 +99,11 @@ impl ObjectImpl for Right {
             #[weak(rename_to = right)]
             self,
             move |obj| {
-                right.seeker.set_range(0.0, obj.length());
+                if obj.length() > 0.0 {
+                    right.seeker.set_range(0.0, obj.length());
+                } else {
+                    right.seeker.set_range(0.0, 0.0);
+                }
             }
         ));
 

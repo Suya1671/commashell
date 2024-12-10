@@ -90,6 +90,9 @@
       devShells.default = pkgs.mkShell {
         inputsFrom = [crate];
 
+        # required for settings and file chooser to work
+        GSETTINGS_SCHEMA_DIR = "${pkgs.gtk4}/share/gsettings-schemas/${pkgs.gtk4.name}/glib-2.0/schemas/:${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas/:./install/share/glib-2.0/schemas/:./install-release/share/glib-2.0/schemas/";
+
         # Extra inputs can be added here; cargo and rustc are provided by default
         # from the toolchain that was specified earlier.
         packages = [

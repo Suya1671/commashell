@@ -30,7 +30,7 @@ template $Top: Adw.Window {
                     "left"
                 ]
 
-                MenuButton {
+                MenuButton wallpaper_button {
                     icon-name: "preferences-desktop-wallpaper-symbolic";
 
                     popover: Popover {
@@ -68,6 +68,13 @@ template $Top: Adw.Window {
                             }
                         };
                     };
+
+                    GestureClick wallpaper_click {
+                        // right-click
+                        button: 3;
+                        name: "weather_right_click";
+                        pressed => $show_wallpaper_right_click() swapped;
+                    }
                 }
             };
 
@@ -90,7 +97,7 @@ template $Top: Adw.Window {
                     }
                 }
 
-                MenuButton {
+                MenuButton weather_button {
                     styles [
                         "weather"
                     ]
@@ -138,7 +145,7 @@ template $Top: Adw.Window {
                             spacing: 8;
 
                             Label {
-                                label: bind template.location;
+                                label: "Weather";
                                 halign: start;
                                 justify: left;
 
@@ -260,6 +267,13 @@ template $Top: Adw.Window {
                             }
                         };
                     };
+
+                    GestureClick weather_click {
+                        // right-click
+                        button: 3;
+                        name: "weather_right_click";
+                        pressed => $show_weather_right_click() swapped;
+                    }
                 }
             };
 
@@ -274,4 +288,138 @@ template $Top: Adw.Window {
             };
         }
     }
+}
+
+FileDialog wallpaper_dialog {
+    accept-label: "Select";
+    title: "Select wallpaper directory";
+}
+
+Popover weather_right_click {
+    styles [
+        "weather-right-click"
+    ]
+
+    child: Box {
+        orientation: vertical;
+        spacing: 8;
+
+        styles [
+            "weather-right-click"
+        ]
+
+        Label {
+            label: "Set your location";
+            halign: center;
+            justify: center;
+
+            styles [
+                "title-1"
+            ]
+        }
+
+        Label {
+            label: "See <a href='https://wttr.in/:help'>wttr.in's supported locations</a> for more details. Remember to refresh after changing";
+            wrap-mode: word_char;
+            wrap: true;
+            width-chars: 20;
+            max-width-chars: 20;
+            halign: center;
+            justify: center;
+            use-markup: true;
+
+            styles [
+                "subtitle"
+            ]
+        }
+
+        Box {
+            styles [
+                "linked"
+            ]
+
+            Entry location_entry {
+                placeholder-text: "Location";
+                changed => $on_location_change() swapped;
+                hexpand: true;
+                halign: fill;
+
+                styles [
+                    "entry"
+                ]
+            }
+
+            Button {
+                icon-name: "view-refresh-symbolic";
+                clicked => $refresh_location() swapped;
+            }
+        }
+    };
+}
+
+Popover wallpaper_right_click {
+    styles [
+        "wallpaper-right-click"
+    ]
+
+    child: Box {
+        orientation: vertical;
+        spacing: 8;
+
+        styles [
+            "wallpaper-right-click"
+        ]
+
+        Label {
+            label: "Set your wallpaper directory";
+            halign: center;
+            justify: center;
+
+            styles [
+                "title-1"
+            ]
+        }
+
+        Label {
+            label: "Choose a folder to load wallpapers from (recursively searches)";
+            halign: center;
+            justify: center;
+
+            styles [
+                "subtitle"
+            ]
+        }
+
+        Box {
+            orientation: horizontal;
+
+            styles [
+                "linked"
+            ]
+
+            Entry {
+                placeholder-text: "Directory";
+                text: bind template.wallpaper_folder;
+                editable: false;
+                focusable: false;
+                sensitive: false;
+                halign: fill;
+                hexpand: true;
+
+                styles [
+                    "entry"
+                ]
+            }
+
+            Button {
+                icon-name: "folder-open-symbolic";
+                clicked => $set_location_folder() swapped;
+            }
+
+            Button {
+                icon-name: "view-refresh-symbolic";
+                clicked => $refresh_location_folder() swapped;
+            }
+        }
+    };
 }

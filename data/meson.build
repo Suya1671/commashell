@@ -43,8 +43,18 @@ if desktop_file_validate.found()
 endif
 
 # GSchema
+gschema_conf = configuration_data()
+gschema_conf.set('app-id', application_id)
+gschema_file = configure_file(
+  input: 'in.wobbl.commashell.gschema.in.xml',
+  output: 'in.wobbl.commashell.gschema.xml',
+  configuration: gschema_conf,
+  install: true,
+  install_dir: datadir / 'glib-2.0' / 'schemas',
+)
+
 install_data(
-  'in.wobbl.commashell.gschema.xml',
+  gschema_file,
   install_dir: datadir / 'glib-2.0' / 'schemas',
 )
 gnome.compile_schemas()

@@ -1,4 +1,5 @@
 use serde::Deserialize;
+#[derive(Default, Debug, Clone)]
 pub struct WeatherService {
     http: reqwest::Client,
 }
@@ -11,8 +12,12 @@ impl WeatherService {
     }
 
     // TODO: allow custom location rather than GeoIP
-    pub async fn get_weather(&self) -> Result<Wttr, reqwest::Error> {
-        let response = self.http.get("https://wttr.in/?format=j1").send().await?;
+    pub async fn get_weather(&self, location: &str) -> Result<Wttr, reqwest::Error> {
+        let response = self
+            .http
+            .get(format!("https://wttr.in/{location}?format=j1"))
+            .send()
+            .await?;
         response.json::<Wttr>().await
     }
 }
@@ -22,7 +27,6 @@ impl WeatherService {
 #[derive(Debug, Clone, Deserialize)]
 pub struct Wttr {
     current_condition: Vec<CurrentCondition>,
-    nearest_area: Vec<NearestArea>,
     request: Vec<Request>,
     weather: Vec<Weather>,
 }
@@ -30,10 +34,6 @@ pub struct Wttr {
 impl Wttr {
     pub fn current_condition(&self) -> &CurrentCondition {
         &self.current_condition[0]
-    }
-
-    pub fn nearest_area(&self) -> &NearestArea {
-        &self.nearest_area[0]
     }
 
     pub fn request(&self) -> &Request {
@@ -165,24 +165,6 @@ pub struct TemperatureSlider {
 #[derive(Debug, Clone, Deserialize)]
 pub struct WeatherDesc {
     pub value: String,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct NearestArea {
-    area_name: Vec<WeatherDesc>,
-    country: Vec<WeatherDesc>,
-    latitude: String,
-    longitude: String,
-    population: String,
-    region: Vec<WeatherDesc>,
-    weather_url: Vec<WeatherDesc>,
-}
-
-impl NearestArea {
-    pub fn location(&self) -> &str {
-        &self.area_name[0].value
-    }
 }
 
 #[derive(Debug, Clone, Deserialize)]

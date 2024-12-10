@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schemalist>
+    <schema path="/in/wobbl/commashell/" id="@app-id@" gettext-domain="commashell">
+        <key name="wallpaper-folder" type="o">
+            <default>"/usr/share/backgrounds"</default>
+            <summary>Directory containing wallpapers</summary>
+        </key>
+
+        <key name="location" type="s">
+            <default>""</default>
+            <summary>Location of the user. See https://wttr.in/:help for all possible options</summary>
+        </key>
+    </schema>
+</schemalist>
