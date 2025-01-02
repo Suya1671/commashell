@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use adw::subclass::window::AdwWindowImpl;
-use astal_mpris::prelude::PlayerExt;
+use astal_mpris::prelude::*;
 use glib::subclass::InitializingObject;
 use gtk::glib::{Properties, SpawnFlags};
 use gtk::subclass::prelude::*;
@@ -15,6 +15,9 @@ use crate::cava::Cava;
 #[template(resource = "/in/wobbl/commashell/ui/right.ui")]
 #[properties(wrapper_type = super::Right)]
 pub struct Right {
+    #[property(get, set, nullable)]
+    pub(super) player: RefCell<Option<astal_mpris::Player>>,
+    // template children
     #[template_child]
     pub default_text: TemplateChild<gtk::Label>,
     #[template_child(id = "player")]
@@ -34,38 +37,33 @@ pub struct Right {
     // properties
     #[property(get, set)]
     pub reveal: RefCell<bool>,
+
+    // extra player-forwarded properties (that may be null, so null cases have to be handled in rust and replaced with defaults)
     #[property(get, set)]
     length: RefCell<f64>,
     #[property(get, set)]
-    position: RefCell<f64>,
-    #[property(get, set)]
     playing: RefCell<bool>,
-    #[property(get, set, nullable)]
-    player: RefCell<Option<astal_mpris::Player>>,
 }
 
 #[gtk::template_callbacks]
 impl Right {
     #[template_callback]
     fn on_play_clicked(&self, _button: &gtk::Button) {
-        let obj = self.obj();
-        if let Some(player) = obj.player().as_ref() {
+        if let Some(player) = self.player.borrow().as_ref() {
             player.play_pause()
         }
     }
 
     #[template_callback]
     fn on_next_clicked(&self, _button: &gtk::Button) {
-        let obj = self.obj();
-        if let Some(player) = obj.player().as_ref() {
+        if let Some(player) = self.player.borrow().as_ref() {
             player.next()
         }
     }
 
     #[template_callback]
     fn on_back_clicked(&self, _button: &gtk::Button) {
-        let obj = self.obj();
-        if let Some(player) = obj.player().as_ref() {
+        if let Some(player) = self.player.borrow().as_ref() {
             player.previous()
         }
     }
@@ -125,19 +123,15 @@ impl ObjectImpl for Right {
             }
         ));
 
-        obj.connect_position_notify(glib::clone!(
-            #[weak(rename_to = right)]
-            self,
-            move |obj| {
-                right.seeker.set_value(obj.position());
-            }
-        ));
-
-        self.seeker.connect_value_changed(glib::clone!(
-            #[weak]
+        self.seeker.connect_change_value(glib::clone!(
+            #[strong]
             obj,
-            move |seeker| {
-                obj.set_position(seeker.value());
+            move |_seeker, _scroll_type, value| {
+                if let Some(player) = &obj.player() {
+                    player.set_position(value);
+                }
+
+                glib::Propagation::Proceed
             }
         ));
 

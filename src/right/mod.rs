@@ -1,3 +1,6 @@
+use std::borrow::Borrow;
+
+use astal::prelude::*;
 use astal_mpris::{
     prelude::{MprisExt, PlayerExt},
     Mpris, PlaybackStatus, Player,
@@ -47,6 +50,23 @@ impl Right {
             move |mpris| connect_players(mpris, &current)
         ));
 
+        mpris.connect_player_closed(glib::clone!(
+            #[weak]
+            current,
+            move |_mpris, player| {
+                let current_player = current.imp().player.borrow();
+                let match_player = current_player.clone().is_some_and(|p| p == *player);
+                drop(current_player);
+
+                if match_player {
+                    current.imp().player_overlay.set_visible(false);
+                    current.imp().lyrics_overlay.set_visible(false);
+                    current.imp().default_text.set_visible(true);
+                    current.set_player(None::<Player>);
+                }
+            }
+        ));
+
         current.init_layer_shell();
         let anchors = [
             (Edge::Left, false),
@@ -91,14 +111,13 @@ fn connect_players(mpris: &Mpris, current: &Right) {
         return;
     };
 
-    if current.player().is_some_and(|p| p == player) {
+    let current_player = current.imp().player.borrow();
+    if current_player.clone().is_some_and(|p| p == player) {
         return;
     }
+    drop(current_player);
 
     current.set_player(Some(player.clone()));
-    current.imp().player_overlay.set_visible(true);
-    current.imp().lyrics_overlay.set_visible(true);
-    current.imp().default_text.set_visible(false);
 
     if player.length() > 0.0 {
         current.set_length(player.length());
@@ -119,12 +138,12 @@ fn connect_players(mpris: &Mpris, current: &Right) {
         }
     ));
 
+    current.imp().seeker.borrow().set_value(player.position());
     player
-        .bind_property("position", current, "position")
-        .bidirectional()
-        .sync_create()
+        .bind_property("position", &current.imp().seeker.borrow().get(), "value")
         .build();
 
+    current.set_playing(player.playback_status() == PlaybackStatus::Playing);
     player.connect_playback_status_notify(glib::clone!(
         #[weak]
         current,
@@ -132,4 +151,8 @@ fn connect_players(mpris: &Mpris, current: &Right) {
             current.set_playing(player.playback_status() == PlaybackStatus::Playing);
         }
     ));
+
+    current.imp().player_overlay.set_visible(true);
+    current.imp().lyrics_overlay.set_visible(true);
+    current.imp().default_text.set_visible(false);
 }
