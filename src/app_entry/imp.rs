@@ -40,14 +40,14 @@ impl AppEntry {
     #[template_callback]
     fn on_app_clicked(&self) {
         let obj = self.obj();
-        obj.application().as_ref().map(|app| {
+        if let Some(app) = obj.application().as_ref() {
             app.disable_launcher();
-        });
+        }
 
-        obj.app().as_ref().map(|app| {
+        if let Some(ref app) = obj.app() {
             use astal_apps::prelude::ApplicationExt;
             app.launch();
-        });
+        };
     }
 }
 

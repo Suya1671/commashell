@@ -22,14 +22,14 @@ impl Notification {
         let current: Self = Object::builder()
             .property(
                 "app-name",
-                &notification.app_name().unwrap_or("Unknown app".into()),
+                notification.app_name().unwrap_or("Unknown app".into()),
             )
             .property(
                 "summary",
-                &notification.summary().unwrap_or("No summary".into()),
+                notification.summary().unwrap_or("No summary".into()),
             )
-            .property("time", &format_time(notification.time()))
-            .property("body", &notification.body().unwrap_or("No body".into()))
+            .property("time", format_time(notification.time()))
+            .property("body", notification.body().unwrap_or("No body".into()))
             .build();
 
         current
@@ -77,7 +77,7 @@ impl Notification {
 
         let actions = notification.actions();
 
-        if actions.len() > 0 {
+        if !actions.is_empty() {
             let ui_box = gtk::Box::new(gtk::Orientation::Horizontal, 0);
             ui_box.add_css_class("actions");
             current.imp().actions_holder.set_child(Some(&ui_box));

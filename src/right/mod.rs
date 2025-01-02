@@ -32,6 +32,8 @@ impl Right {
             .property("default-height", monitor.geometry().height())
             .build();
 
+        current.set_monitor(monitor);
+
         current
             .bind_property("reveal", app, "right-reveal")
             .bidirectional()
@@ -73,11 +75,11 @@ fn connect_players(mpris: &Mpris, current: &Right) {
         .max_by_key(|player| {
             let i = player.identity();
             if i.as_ref().is_some_and(|i| i.contains("Feishin")) {
-                return 200;
+                200
             } else if i.as_ref().is_some_and(|i| i.contains("strawberry")) {
-                return 100;
+                100
             } else {
-                return 0;
+                0
             }
         })
         .cloned()
@@ -98,14 +100,22 @@ fn connect_players(mpris: &Mpris, current: &Right) {
     current.imp().lyrics_overlay.set_visible(true);
     current.imp().default_text.set_visible(false);
 
-    current.set_length(player.length());
+    if player.length() > 0.0 {
+        current.set_length(player.length());
+    } else {
+        current.set_length(0.0);
+    }
 
     player.connect_length_notify(glib::clone!(
         #[weak]
         current,
         move |player| {
-            // TODO: fix it when length is seemingly non-existent
-            current.set_length(player.length());
+            // TODO: better fix it when length is seemingly non-existent
+            if player.length() > 0.0 {
+                current.set_length(player.length());
+            } else {
+                current.set_length(0.0);
+            }
         }
     ));
 

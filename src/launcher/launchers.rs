@@ -35,7 +35,7 @@ impl Launcher for Qalculate {
         let output = String::from_utf8(result.stdout).unwrap();
         let output = output.trim_end();
 
-        let output = gtk::Button::with_label(&output);
+        let output = gtk::Button::with_label(output);
         output.add_css_class("app-entry");
         output.set_valign(gtk::Align::Center);
         output
@@ -76,7 +76,7 @@ impl Launcher for FuzzyAppSearch {
     }
 
     fn launch(&self, term: &str) -> impl Iterator<Item = gtk::Widget> {
-        let list = self.apps.fuzzy_query(Some(&term));
+        let list = self.apps.fuzzy_query(Some(term));
         let slice = &list[..min(200, list.len())];
 
         slice

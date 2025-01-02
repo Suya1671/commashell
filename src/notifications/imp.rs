@@ -2,8 +2,8 @@ use std::cell::RefCell;
 
 use adw::subclass::window::AdwWindowImpl;
 use glib::subclass::InitializingObject;
+use gtk::gio;
 use gtk::subclass::prelude::*;
-use gtk::{gio, prelude::*};
 use gtk::{glib, CompositeTemplate};
 
 #[derive(CompositeTemplate, Default, Debug)]

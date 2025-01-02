@@ -75,8 +75,8 @@ impl Wttr {
             let sunrise = &today_weather.astronomy[0].sunrise;
             let sunset = &today_weather.astronomy[0].sunset;
             // change to 24 hour format
-            let sunrise = chrono::NaiveTime::parse_from_str(&sunrise, "%I:%M %p").unwrap();
-            let sunset = chrono::NaiveTime::parse_from_str(&sunset, "%I:%M %p").unwrap();
+            let sunrise = chrono::NaiveTime::parse_from_str(sunrise, "%I:%M %p").unwrap();
+            let sunset = chrono::NaiveTime::parse_from_str(sunset, "%I:%M %p").unwrap();
             let now = chrono::Local::now().time();
 
             now < sunrise || now > sunset
@@ -87,6 +87,7 @@ impl Wttr {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
+#[allow(dead_code)]
 pub struct CurrentCondition {
     #[serde(rename = "FeelsLikeC")]
     feels_like_c: String,
@@ -176,6 +177,7 @@ pub struct Request {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
+#[allow(dead_code)]
 pub struct Weather {
     astronomy: Vec<Astronomy>,
     #[serde(rename = "avgtempC")]
@@ -230,6 +232,7 @@ impl Weather {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct Astronomy {
     pub moon_illumination: String,
     pub moon_phase: String,
@@ -241,6 +244,7 @@ pub struct Astronomy {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
+#[allow(dead_code)]
 pub struct Hourly {
     #[serde(rename = "DewPointC")]
     dew_point_c: String,
@@ -340,7 +344,7 @@ impl Hourly {
     }
 
     pub fn desc(&self) -> &str {
-        &self.weather_desc[0].value.trim()
+        self.weather_desc[0].value.trim()
     }
 
     /// time is millitary style time. E.g. 0 = 12:00 AM, 300 = 3:00 AM, 1200 = 12:00 PM
@@ -360,8 +364,8 @@ impl Hourly {
             let sunrise = &weather.astronomy[0].sunrise;
             let sunset = &weather.astronomy[0].sunset;
             // change to 24 hour format
-            let sunrise = chrono::NaiveTime::parse_from_str(&sunrise, "%I:%M %p").unwrap();
-            let sunset = chrono::NaiveTime::parse_from_str(&sunset, "%I:%M %p").unwrap();
+            let sunrise = chrono::NaiveTime::parse_from_str(sunrise, "%I:%M %p").unwrap();
+            let sunset = chrono::NaiveTime::parse_from_str(sunset, "%I:%M %p").unwrap();
 
             let time = self.time();
 

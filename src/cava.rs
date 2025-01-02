@@ -16,6 +16,12 @@ impl Cava {
     }
 }
 
+impl Default for Cava {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 mod imp {
 
     use std::cell::RefCell;
@@ -74,8 +80,8 @@ mod imp {
                 DrawingDirection::RightToLeft,
                 width / 2.0,
                 0.0,
-                width as f32 / 2.0,
-                height as f32,
+                width / 2.0,
+                height,
             );
 
             let final_path = PathBuilder::new();
@@ -141,7 +147,7 @@ fn create_path(
     width: f32,
     height: f32,
 ) -> Path {
-    let step = height as f32 / (sample.len() as f32 - 1.0);
+    let step = height / (sample.len() as f32 - 1.0);
     let path_builder = PathBuilder::new();
     let flip_image = direction == DrawingDirection::RightToLeft;
 

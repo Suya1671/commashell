@@ -86,7 +86,7 @@ impl Top {
     pub fn set_location_folder(&self) {
         let obj = self.obj();
 
-        let path = gio::File::for_path(&obj.wallpaper_folder());
+        let path = gio::File::for_path(obj.wallpaper_folder());
         if path.path().is_some_and(|p| p.exists()) {
             self.wallpaper_dialog.set_initial_folder(Some(&path));
         }

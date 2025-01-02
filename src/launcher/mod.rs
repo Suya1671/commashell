@@ -27,6 +27,8 @@ impl Launcher {
             .property("default-width", monitor.geometry().width())
             .build();
 
+        current.set_monitor(monitor);
+
         current.setup_app_entries();
 
         current
@@ -73,7 +75,7 @@ impl Launcher {
         self.imp()
             .list
             .bind_model(Some(&self.app_entries()), move |item| {
-                <gtk::glib::Object as Clone>::clone(&item)
+                <gtk::glib::Object as Clone>::clone(item)
                     .downcast::<gtk::Widget>()
                     .unwrap()
             });

@@ -58,7 +58,9 @@ impl Notification {
 
     #[template_callback]
     fn on_dismiss(&self, _button: &gtk::Button) {
-        self.notification.borrow().as_ref().map(|n| n.dismiss());
+        if let Some(n) = self.notification.borrow().as_ref() {
+            n.dismiss()
+        }
     }
 }
 

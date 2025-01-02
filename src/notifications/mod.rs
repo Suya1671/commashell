@@ -23,6 +23,7 @@ glib::wrapper! {
 impl Notifications {
     pub fn new(app: &App, monitor: &Monitor) -> Self {
         let current: Self = Object::builder().property("application", app).build();
+        current.set_monitor(monitor);
         let notifd = astal_notifd::functions::default().expect("Expected to get default Notifd");
 
         notifd.connect_notified(glib::clone!(

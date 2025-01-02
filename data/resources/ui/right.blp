@@ -2,6 +2,7 @@ using Gtk 4.0;
 using Adw 1;
 using Vte 3.91;
 using AstalMpris 0.1;
+using Astal 4.0;
 
 template $Right: Adw.Window {
     title: "Right sidebar";
@@ -115,7 +116,7 @@ Box player_content {
             }
         }
 
-        Scale seeker {
+        Astal.Slider seeker {
             hexpand: true;
         }
     }

@@ -28,7 +28,7 @@ pub struct Right {
     #[template_child]
     pub lyrics_terminal: TemplateChild<vte4::Terminal>,
     #[template_child]
-    pub seeker: TemplateChild<gtk::Scale>,
+    pub seeker: TemplateChild<astal::Slider>,
     #[template_child]
     pub play: TemplateChild<gtk::Button>,
     // properties
@@ -49,19 +49,25 @@ impl Right {
     #[template_callback]
     fn on_play_clicked(&self, _button: &gtk::Button) {
         let obj = self.obj();
-        obj.player().as_ref().map(|player| player.play_pause());
+        if let Some(player) = obj.player().as_ref() {
+            player.play_pause()
+        }
     }
 
     #[template_callback]
     fn on_next_clicked(&self, _button: &gtk::Button) {
         let obj = self.obj();
-        obj.player().as_ref().map(|player| player.next());
+        if let Some(player) = obj.player().as_ref() {
+            player.next()
+        }
     }
 
     #[template_callback]
     fn on_back_clicked(&self, _button: &gtk::Button) {
         let obj = self.obj();
-        obj.player().as_ref().map(|player| player.previous());
+        if let Some(player) = obj.player().as_ref() {
+            player.previous()
+        }
     }
 }
 
@@ -102,7 +108,7 @@ impl ObjectImpl for Right {
                 if obj.length() > 0.0 {
                     right.seeker.set_range(0.0, obj.length());
                 } else {
-                    right.seeker.set_range(0.0, 0.0);
+                    right.seeker.set_range(0.0, 1.0);
                 }
             }
         ));

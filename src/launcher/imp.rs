@@ -84,20 +84,22 @@ impl Launcher {
         }
 
         let fuzzy_search = FuzzyAppSearch::new(application.clone(), self.obj().apps());
-        if launch_if_can(&model, fuzzy_search, &text) {
-            return;
-        }
+        if launch_if_can(&model, fuzzy_search, &text) {}
     }
 
     #[template_callback]
     fn on_search_activate(&self, _entry: &gtk::Entry) {
-        self.app_entries.borrow().as_ref().map(|model| {
-            if let Some(row) = model.item(0) {
-                if let Some(button) = row.downcast_ref::<gtk::Button>() {
-                    button.activate();
-                }
+        if let Some(row) = self
+            .app_entries
+            .borrow()
+            .as_ref()
+            .and_then(|model| model.item(0))
+        {
+            // to save a clone, this isn't apart of the and_then stack
+            if let Some(button) = row.downcast_ref::<gtk::Button>() {
+                button.activate();
             }
-        });
+        };
     }
 }
 

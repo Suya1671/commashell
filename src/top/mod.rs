@@ -33,7 +33,7 @@ impl Top {
             &Closure::new(move |_| {
                 glib::DateTime::now_local()
                     .and_then(|dt| dt.format("%H:%M:%S · %A %d/%m"))
-                    .map(|s| Value::from(s))
+                    .map(Value::from)
                     .ok()
             }),
         )
@@ -44,6 +44,8 @@ impl Top {
             .property("main-text", "Hi!")
             .property("default-width", monitor.geometry().width())
             .build();
+
+        current.set_monitor(monitor);
 
         current
             .bind_property("reveal", app, "top-reveal")
@@ -97,10 +99,10 @@ impl Top {
             current,
             async move {
                 // every 1 hour
-                let mut stream = glib::interval_stream(std::time::Duration::from_secs(1 * 60 * 60));
+                let mut stream = glib::interval_stream(std::time::Duration::from_secs(60 * 60));
                 current.update_weather().await;
 
-                while let Some(_) = stream.next().await {
+                while (stream.next().await).is_some() {
                     current.update_weather().await;
                 }
             }
@@ -189,14 +191,14 @@ impl Top {
                     icon.set_pixel_size(32);
                     container.append(&icon);
 
-                    let description_label = gtk::Label::new(Some(&desc));
+                    let description_label = gtk::Label::new(Some(desc));
                     container.append(&description_label);
 
                     // TODO: celcius/fahrenheit config
                     let temperature_slider = gtk::LevelBar::new();
-                    temperature_slider.set_value(temp.value as f64);
-                    temperature_slider.set_min_value(temp.min as f64);
-                    temperature_slider.set_max_value(temp.max as f64);
+                    temperature_slider.set_value(temp.value);
+                    temperature_slider.set_min_value(temp.min);
+                    temperature_slider.set_max_value(temp.max);
                     container.append(&temperature_slider);
 
                     let temperature_label =
