@@ -256,12 +256,12 @@ template $Top: Adw.Window {
                                 vscrollbar-policy: never;
                                 width-request: 256;
 
-                                Box hourly_weather {
+                                Box daily_weather {
                                     orientation: horizontal;
                                     spacing: 8;
 
                                     styles [
-                                        "hourly-weather"
+                                        "daily-weather"
                                     ]
                                 }
                             }
@@ -354,6 +354,27 @@ Popover weather_right_click {
                 clicked => $refresh_location() swapped;
             }
         }
+
+        Box {
+            styles [
+                "linked"
+            ]
+
+            Label {
+                hexpand: true;
+                halign: fill;
+                label: "Use metric units";
+            }
+
+            Switch {
+                active: bind template.use_metric_units;
+                state-set => $on_use_metric_units() swapped;
+
+                styles [
+                    "switch"
+                ]
+            }
+        }
     };
 }
 
@@ -370,55 +391,95 @@ Popover wallpaper_right_click {
             "wallpaper-right-click"
         ]
 
-        Label {
-            label: "Set your wallpaper directory";
-            halign: center;
-            justify: center;
+        Box {
+            orientation: vertical;
 
-            styles [
-                "title-1"
-            ]
-        }
+            Label {
+                label: "Set your wallpaper directory";
+                halign: center;
+                justify: center;
 
-        Label {
-            label: "Choose a folder to load wallpapers from (recursively searches)";
-            halign: center;
-            justify: center;
+                styles [
+                    "title-1"
+                ]
+            }
 
-            styles [
-                "subtitle"
-            ]
+            Label {
+                label: "Choose a folder to load wallpapers from (recursively searches)";
+                halign: center;
+                justify: center;
+
+                styles [
+                    "subtitle"
+                ]
+            }
+
+            Box {
+                orientation: horizontal;
+
+                styles [
+                    "linked"
+                ]
+
+                Entry {
+                    placeholder-text: "Directory";
+                    text: bind template.wallpaper_folder;
+                    editable: false;
+                    focusable: false;
+                    sensitive: false;
+                    halign: fill;
+                    hexpand: true;
+
+                    styles [
+                        "entry"
+                    ]
+                }
+
+                Button {
+                    icon-name: "folder-open-symbolic";
+                    clicked => $set_location_folder() swapped;
+                }
+
+                Button {
+                    icon-name: "view-refresh-symbolic";
+                    clicked => $refresh_location_folder() swapped;
+                }
+            }
         }
 
         Box {
-            orientation: horizontal;
+            orientation: vertical;
 
-            styles [
-                "linked"
-            ]
+            Label {
+                label: "Set your wallpaper command";
+                halign: center;
+                justify: center;
 
-            Entry {
-                placeholder-text: "Directory";
-                text: bind template.wallpaper_folder;
-                editable: false;
-                focusable: false;
-                sensitive: false;
+                styles [
+                    "title-1"
+                ]
+            }
+
+            Label {
+                label: "What should we run to set the wallpaper? (use {path} for the file)";
+                halign: center;
+                justify: center;
+
+                styles [
+                    "subtitle"
+                ]
+            }
+
+            Entry wallpaper_command_entry {
+                placeholder-text: "Command";
+                changed => $on_wallpaper_command_change() swapped;
+                editable: true;
                 halign: fill;
                 hexpand: true;
 
                 styles [
                     "entry"
                 ]
-            }
-
-            Button {
-                icon-name: "folder-open-symbolic";
-                clicked => $set_location_folder() swapped;
-            }
-
-            Button {
-                icon-name: "view-refresh-symbolic";
-                clicked => $refresh_location_folder() swapped;
             }
         }
     };

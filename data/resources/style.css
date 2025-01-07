@@ -1,220 +1,226 @@
 /* top */
 .top {
-  margin-left: 1rem;
-  margin-right: 1rem;
-  border-radius: 0 0 12px 12px;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    border-radius: 0 0 12px 12px;
 }
 
 .top .inner {
-  padding: 0.5rem 1rem;
+    padding: 0.5rem 1rem;
 }
 
 .top .center .time {
-  background-color: var(--accent-bg-color);
-  color: var(--accent-fg-color);
+    background-color: var(--accent-bg-color);
+    color: var(--accent-fg-color);
 
-  border-radius: 12px;
-  padding-left: 1rem;
-  padding-right: 1rem;
+    border-radius: 12px;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 .wallpaper-image {
-  border-radius: 8px;
+    border-radius: 8px;
 }
 
 .wallpaper-list > *:hover {
-  background: inherit;
+    background: inherit;
 }
 
 .wallpapers > .title-1 {
-  margin-top: 1rem;
+    margin-top: 1rem;
+}
+
+.weather .menu .weather {
+    padding: 1rem;
+}
+
+.weather-icon-image {
+    color: var(--accent-color);
+}
+
+.daily-weather-entry {
+    background: var(--window-bg-color);
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+.weather-details {
+    padding: 1rem;
+    border-radius: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--window-bg-color);
+}
+
+.top .inner {
+    padding: 0.5rem 1rem;
 }
 
 /* right */
 .right {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  border-radius: 12px 0 0 12px;
-}
-
-.top .inner {
-  padding: 0.5rem 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 12px 0 0 12px;
 }
 
 .cava {
-  color: var(--accent-color);
-  filter: blur(12px) brightness(0.4);
+    color: var(--accent-color);
+    filter: blur(12px) brightness(0.4);
 }
 
 .player_content {
-  background: rgb(from var(--headerbar-bg-color) r g b);
+    background: rgb(from var(--headerbar-bg-color) r g b);
 
-  padding: 1rem;
-  padding-bottom: 0.5rem;
-  border-radius: 2rem 2rem 0 0;
+    padding: 1rem;
+    padding-bottom: 0.5rem;
+    border-radius: 2rem 2rem 0 0;
 }
 
 .player_content > .linked > .button {
-  --accent-color: var(--accent-purple);
-  color: var(--accent-color);
+    --accent-color: var(--accent-purple);
+    color: var(--accent-color);
 }
 
 .title-header {
-  background: rgb(from var(--headerbar-bg-color) r g b / 0.8);
+    background: rgb(from var(--headerbar-bg-color) r g b / 0.8);
 
-  padding-bottom: 1rem;
-  border-radius: 0 0 2rem 2rem;
-  margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-radius: 0 0 2rem 2rem;
+    margin-bottom: 1rem;
 }
 
 .title-header .title-1 {
-  padding: 0.5rem;
+    padding: 0.5rem;
 }
 
 .lyrics {
-  padding: 1rem;
+    padding: 1rem;
 }
 
 /* notifications */
 /* TODOs: figure out how to make the notifications look better with no image. Try to make em smaller, animations */
 .notifications {
-  background: none;
+    background: none;
 }
 
 .notifications-container {
-  min-height: 1px;
-  background: rgb(0 0 0 / 0.01);
+    min-height: 1px;
+    background: rgb(0 0 0 / 0.01);
 }
 
 .notifications-container > *:hover {
-  background: inherit;
+    background: inherit;
 }
 
 .notifications-container:first-child {
-  margin-top: 1rem;
+    margin-top: 1rem;
 }
 
 .notification {
-  min-width: 400px;
-  border: double 2pt transparent;
-  background: var(--window-bg-color);
-  border-radius: 7px;
-  padding: 0.5rem;
+    min-width: 400px;
+    border: double 2pt transparent;
+    background: var(--window-bg-color);
+    border-radius: 7px;
+    padding: 0.5rem;
 }
 
 .notification-container {
-  margin: 0.5rem 1rem 0.5rem 1rem;
-  min-width: 400px;
-  background: linear-gradient(
-    130deg,
-    var(--accent-blue) 0%,
-    var(--accent-color) 100%
-  );
-  border-radius: 12px;
-  padding: 5px;
+    margin: 0.5rem 1rem 0.5rem 1rem;
+    min-width: 400px;
+    background: linear-gradient(
+        130deg,
+        var(--accent-blue) 0%,
+        var(--accent-color) 100%
+    );
+    border-radius: 12px;
+    padding: 5px;
 }
 
 .critical.notification-container {
-  background: var(--accent-red);
+    background: var(--accent-red);
 }
 
 .notification .header {
-  padding: 0.5rem;
-  padding-top: 0;
+    padding: 0.5rem;
+    padding-top: 0;
 }
 
 .notification .header .app-icon {
-  margin-right: 0.5rem;
+    margin-right: 0.5rem;
 }
 
 .notification .header .app-name {
-  margin-right: 0.5rem;
+    margin-right: 0.5rem;
 }
 
 .normal .notification .header .close-button {
-  color: var(--accent-color);
+    color: var(--accent-color);
 }
 
 .critical .notification .header {
-  color: var(--accent-red);
+    color: var(--accent-red);
 }
 
 .low .notification .header {
-  color: rgb(from var(--window-fg-color) r g b / 0.7);
+    color: rgb(from var(--window-fg-color) r g b / 0.7);
 }
 
 .notification .header .time {
-  margin: 0 0.4rem;
-  color: rgb(from var(--window-fg-color) r g b / 0.8);
-  font-size: 0.8rem;
+    margin: 0 0.4rem;
+    color: rgb(from var(--window-fg-color) r g b / 0.8);
+    font-size: 0.8rem;
 }
 
 .notification .content {
-  margin: 1rem;
+    margin: 1rem;
 }
 
 .notification .body-content {
-  margin-top: 0.5rem;
-  background: var(--dialog-bg-color);
-  padding: 1rem;
-  border-radius: 12px;
+    margin-top: 0.5rem;
+    background: var(--dialog-bg-color);
+    padding: 1rem;
+    border-radius: 12px;
 }
 
 .notification .actions {
-  padding: 0;
+    padding: 0;
 }
 
 .notification .actions > * {
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
 }
 
 .notification .actions:first-child {
-  margin-left: 0;
+    margin-left: 0;
 }
 
 .notification .actions:last-child {
-  margin-right: 0;
+    margin-right: 0;
 }
 
 .notification .image {
-  margin-right: 1rem;
-  border-radius: 16px;
+    margin-right: 1rem;
+    border-radius: 16px;
 }
 
+/* app launcher */
+
 .launcher {
-  border-radius: 12px;
-  border: 2px solid var(--accent-color);
-  padding: 1rem;
+    border-radius: 12px;
+    border: 2px solid var(--accent-color);
+    padding: 1rem;
 }
 
 .app-entry {
-  background: var(--dialog-bg-color);
-  min-height: 50px;
+    background: var(--dialog-bg-color);
+    min-height: 50px;
 }
 
 .app-icon {
-  margin-right: 1rem;
+    margin-right: 1rem;
 }
 
-.weather .menu .weather {
-  padding: 1rem;
-}
-
-.weather-icon-image {
-  color: var(--accent-color);
-}
-
-.daily-weather-entry {
-  background: var(--window-bg-color);
-  padding: 1rem;
-  border-radius: 1rem;
-}
-
-.weather-details {
-  padding: 1rem;
-  border-radius: 1rem;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-  background-color: var(--window-bg-color);
+.playback-seeker highlight {
+    margin: 0;
 }

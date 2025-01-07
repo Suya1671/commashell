@@ -10,5 +10,15 @@
             <default>""</default>
             <summary>Location of the user. See https://wttr.in/:help for all possible options</summary>
         </key>
+
+        <key name="use-metric-units" type="b">
+            <default>true</default>
+            <summary>Whether or not to use metric units when displaying the weather</summary>
+        </key>
+
+        <key name="wallpaper-command" type="s">
+            <default>"swww img -t wave --transition-angle 30 --transition-bezier 0.41,0.26,0.98,1 --transition-step 180 --transition-fps 60 --transition-duration 1.2 {path}"</default>
+            <summary>What should we run to set the wallpaper? (use {path} for the file)</summary>
+        </key>
     </schema>
 </schemalist>

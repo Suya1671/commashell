@@ -205,10 +205,19 @@ impl Weather {
         &self.hourly
     }
 
-    pub fn temperature_slider(&self) -> TemperatureSlider {
-        let current_temp = self.avg_temp_c.parse::<f64>().unwrap();
-        let min_temp = self.min_temp_c.parse::<f64>().unwrap();
-        let max_temp = self.max_temp_c.parse::<f64>().unwrap();
+    pub fn temperature_slider(&self, unit: TemperatureUnit) -> TemperatureSlider {
+        let (current_temp, min_temp, max_temp) = match unit {
+            TemperatureUnit::Celsius => (
+                self.avg_temp_c.parse::<f64>().unwrap(),
+                self.min_temp_c.parse::<f64>().unwrap(),
+                self.max_temp_c.parse::<f64>().unwrap(),
+            ),
+            TemperatureUnit::Fahrenheit => (
+                self.avg_temp_f.parse::<f64>().unwrap(),
+                self.min_temp_f.parse::<f64>().unwrap(),
+                self.max_temp_f.parse::<f64>().unwrap(),
+            ),
+        };
 
         TemperatureSlider {
             min: min_temp,

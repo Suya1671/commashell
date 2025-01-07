@@ -20,6 +20,10 @@ pub struct Top {
     pub time: RefCell<String>,
     #[property(get, set)]
     pub reveal: RefCell<bool>,
+    #[property(get, set)]
+    pub use_metric_units: RefCell<bool>,
+    #[property(get, set)]
+    pub wallpaper_command: RefCell<String>,
 
     #[property(get, set)]
     pub weather_temp: RefCell<f32>,
@@ -47,10 +51,10 @@ pub struct Top {
     #[template_child]
     pub wallpaper_items: TemplateChild<gtk::ListBox>,
     #[template_child]
-    pub hourly_weather: TemplateChild<gtk::Box>,
+    pub daily_weather: TemplateChild<gtk::Box>,
 
     pub wallpaper_entries: RefCell<Option<gio::ListStore>>,
-    pub hourly_weather_entries: RefCell<Option<gio::ListStore>>,
+    pub daily_weather_entries: RefCell<Option<gio::ListStore>>,
 
     #[template_child]
     pub location_entry: TemplateChild<gtk::Entry>,
@@ -61,6 +65,8 @@ pub struct Top {
     pub wallpaper_folder: RefCell<String>,
     #[template_child]
     pub wallpaper_dialog: TemplateChild<gtk::FileDialog>,
+    #[template_child]
+    pub wallpaper_command_entry: TemplateChild<gtk::Entry>,
 
     #[template_child]
     pub weather_right_click: TemplateChild<gtk::Popover>,
@@ -146,9 +152,9 @@ impl Top {
     }
 
     #[template_callback]
-    pub fn on_location_change(&self) {
+    pub fn on_location_change(&self, location_entry: gtk::Entry) {
         let obj = self.obj();
-        obj.set_location(self.location_entry.text().to_string());
+        obj.set_location(location_entry.text().to_string());
     }
 
     #[template_callback]
@@ -162,6 +168,28 @@ impl Top {
                 obj.update_weather().await;
             }
         ));
+    }
+
+    #[template_callback]
+    pub fn on_wallpaper_command_change(&self, entry: gtk::Entry) {
+        let obj = self.obj();
+        obj.set_wallpaper_command(entry.text());
+    }
+
+    #[template_callback]
+    pub fn on_use_metric_units(&self, new_val: bool) -> bool {
+        let obj = self.obj();
+        obj.set_use_metric_units(new_val);
+
+        glib::spawn_future_local(glib::clone!(
+            #[weak]
+            obj,
+            async move {
+                obj.update_weather().await;
+            }
+        ));
+
+        false
     }
 }
 
@@ -191,7 +219,7 @@ impl ObjectImpl for Top {
         // Setup
         let obj = self.obj();
         obj.setup_wallpaper_entries();
-        obj.setup_hourly_weather_entries();
+        obj.setup_daily_weather_entries();
 
         self.weather_right_click
             .set_parent(&self.weather_button.get());

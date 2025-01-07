@@ -41,7 +41,6 @@ impl Top {
 
         let current: Self = Object::builder()
             .property("application", app)
-            .property("main-text", "Hi!")
             .property("default-width", monitor.geometry().width())
             .build();
 
@@ -59,11 +58,25 @@ impl Top {
             .build();
 
         settings
+            .bind("wallpaper-command", &current, "wallpaper-command")
+            .flags(SettingsBindFlags::GET | SettingsBindFlags::SET)
+            .build();
+
+        settings
             .bind("location", &current, "location")
             .flags(SettingsBindFlags::GET | SettingsBindFlags::SET)
             .build();
 
+        settings
+            .bind("use-metric-units", &current, "use-metric-units")
+            .flags(SettingsBindFlags::GET | SettingsBindFlags::SET)
+            .build();
+
         current.imp().location_entry.set_text(&current.location());
+        current
+            .imp()
+            .wallpaper_command_entry
+            .set_text(&current.wallpaper_command());
 
         let time_ref = SendWeakRef::from(Downgrade::downgrade(&time));
 
@@ -90,6 +103,7 @@ impl Top {
 
         current.set_default_height(1);
         current.set_height_request(1);
+        current.set_keyboard_mode(gtk4_layer_shell::KeyboardMode::OnDemand);
         current.auto_exclusive_zone_enable();
 
         current.present();
@@ -118,10 +132,9 @@ impl Top {
         match weather {
             Ok(weather) => {
                 let temp = weather.temperature_slider();
-                // TODO: configurable icon path
                 let desc = weather
                     .current_condition()
-                    .temperature(weather::TemperatureUnit::Celsius);
+                    .temperature(self.temperature_unit());
                 let icon = weather.weather_icon();
 
                 let uv_index = weather.current_condition().uv_index();
@@ -164,10 +177,10 @@ impl Top {
                     }
                 });
 
-                self.hourly_weather_entries().remove_all();
+                self.daily_weather_entries().remove_all();
 
                 for day in weather.weather() {
-                    let temp = day.temperature_slider();
+                    let temp = day.temperature_slider(self.temperature_unit());
                     let desc = day.desc();
                     let icon = day.icon();
                     let day = day.date();
@@ -194,18 +207,23 @@ impl Top {
                     let description_label = gtk::Label::new(Some(desc));
                     container.append(&description_label);
 
-                    // TODO: celcius/fahrenheit config
                     let temperature_slider = gtk::LevelBar::new();
                     temperature_slider.set_value(temp.value);
                     temperature_slider.set_min_value(temp.min);
                     temperature_slider.set_max_value(temp.max);
                     container.append(&temperature_slider);
 
-                    let temperature_label =
-                        gtk::Label::new(Some(format!("{}°C / {}°C", temp.min, temp.max).as_str()));
+                    let temperature_label = gtk::Label::new(Some(&match self.temperature_unit() {
+                        weather::TemperatureUnit::Celsius => {
+                            format!("{}°C ({}°C / {}°C)", temp.value, temp.min, temp.max)
+                        }
+                        weather::TemperatureUnit::Fahrenheit => {
+                            format!("{}°F ({}°F / {}°F)", temp.value, temp.min, temp.max)
+                        }
+                    }));
                     container.append(&temperature_label);
 
-                    self.hourly_weather_entries().append(&container);
+                    self.daily_weather_entries().append(&container);
                 }
             }
             Err(e) => eprintln!("Failed to get weather: {:?}", e),
@@ -220,33 +238,34 @@ impl Top {
             .expect("Wallpaper entries not set")
     }
 
-    fn hourly_weather_entries(&self) -> gio::ListStore {
+    fn daily_weather_entries(&self) -> gio::ListStore {
         self.imp()
-            .hourly_weather_entries
+            .daily_weather_entries
             .borrow()
             .clone()
-            .expect("Hourly weather entries not set")
+            .expect("Daily weather entries not set")
     }
 
-    fn setup_hourly_weather_entries(&self) {
+    fn setup_daily_weather_entries(&self) {
         let model = gio::ListStore::new::<gtk::Widget>();
 
         self.imp()
-            .hourly_weather_entries
+            .daily_weather_entries
             .replace(Some(model.clone()));
 
-        // TODO: proper glib object for hourly weather
-        self.hourly_weather_entries()
+        // TODO: proper glib object for daily weather
+        self.daily_weather_entries()
             .connect_items_changed(glib::clone!(
                 #[weak(rename_to = current)]
                 self,
                 move |entries, _position, _added, _removed| {
-                    while let Some(child) = current.imp().hourly_weather.first_child() {
-                        current.imp().hourly_weather.remove(&child);
+                    // the most cursed way to remove all children from a list store
+                    while let Some(child) = current.imp().daily_weather.first_child() {
+                        current.imp().daily_weather.remove(&child);
                     }
 
                     for item in entries.iter::<gtk::Widget>().filter_map(|item| item.ok()) {
-                        current.imp().hourly_weather.append(&item);
+                        current.imp().daily_weather.append(&item);
                     }
                 }
             ));
@@ -287,6 +306,8 @@ impl Top {
             }
         });
 
+        // reference counting shenanigans
+        let obj = self.clone();
         self.imp()
             .wallpaper_items
             .bind_model(Some(&self.wallpaper_entries()), move |item| {
@@ -308,22 +329,35 @@ impl Top {
                 let button = gtk::Button::new();
                 button.set_child(Some(&image));
                 button.add_css_class("wallpaper-entry");
-                button.connect_clicked(move |_button| {
-                    // TODO: configurable wallpaper launch command
-                    let command = format!("swww img -t wave --transition-angle 30 --transition-bezier 0.41,0.26,0.98,1 --transition-step 180 --transition-fps 60 --transition-duration 1.2 {}", image_path.display());
-                    let (command, args) = command.split_once(' ').unwrap();
-                    let args = args.split(' ');
-                    if let Err(command) = Command::new(command)
-                        .args(args)
-                        .spawn() {
-                        eprintln!("Failed to execute command: {:?}", command);
-                    };
-                });
+                button.connect_clicked(glib::clone!(
+                    #[weak]
+                    obj,
+                    move |_button| {
+                        let command = obj
+                            .wallpaper_command()
+                            .replace("{path}", &image_path.to_string_lossy());
+
+                        let (command, args) = command.split_once(' ').unwrap();
+
+                        let args = args.split(' ');
+                        if let Err(command) = Command::new(command).args(args).spawn() {
+                            eprintln!("Failed to execute command: {:?}", command);
+                        };
+                    }
+                ));
 
                 button.into()
             });
 
         self.notify_wallpaper_folder();
+    }
+
+    fn temperature_unit(&self) -> weather::TemperatureUnit {
+        if self.use_metric_units() {
+            weather::TemperatureUnit::Celsius
+        } else {
+            weather::TemperatureUnit::Fahrenheit
+        }
     }
 }
 

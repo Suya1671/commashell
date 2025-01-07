@@ -129,7 +129,7 @@ fn connect_players(mpris: &Mpris, current: &Right) {
         #[weak]
         current,
         move |player| {
-            // TODO: better fix it when length is seemingly non-existent
+            // if the lenght is -1, nothing is playing
             if player.length() > 0.0 {
                 current.set_length(player.length());
             } else {
