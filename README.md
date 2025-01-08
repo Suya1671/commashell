@@ -27,6 +27,43 @@ I will add support for usage with other rices soon. Many things will look wrong 
   - [x] Journal entry (requires Obsidian + Thino Pro plugin. I will add support for other journaling apps soon:tm:. `; ` prefix)
   - [ ] Task taking (will use ticktick. I will add support for other task managers soon:tm:)
 
+## Installation
+NOTE: due to this being beta, it is not easily distributed or packaged. You will have to build it yourself.
+
+### Dependencies
+Note: The nix shell includes all the dependencies needed to build the project
+
+#### Build-time
+- [Rust](https://rust-lang.org)
+- [Meson](https://mesonbuild.com)
+- [Ninja](https://ninja-build.org)
+- [GTK 4](https://gtk.org)
+- [Libadwaita](https://gitlab.gnome.org/GNOME/libadwaita)
+- [Astal](https://aylur.github.io/astal/)
+- [Blueprint Compiler](https://jwestman.pages.gitlab.gnome.org/blueprint-compiler)
+- [Cava](https://github.com/karlstav/cava)
+
+#### Runtime
+- [Astal](https://aylur.github.io/astal/)
+- [Cava](https://github.com/karlstav/cava)
+- [GTK 4](https://gtk.org)
+- [sptlrx](https://github.com/raitonoberu/sptlrx)
+- [libqalculate](https://qalculate.github.io/)
+
+### Building
+```sh
+meson setup build
+ninja -C build
+```
+
+### Running
+```sh
+./build/src/commashell
+```
+
+And it should just work:tm:.
+Right click on the top bar's weather and wallpaper buttons to configure them.
+
 ## Talk is cheap, show me the screenshots
 oki
 
