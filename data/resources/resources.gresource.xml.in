@@ -55,5 +55,14 @@
     <file
       preprocess="xml-stripblanks"
       alias="sun-outline-symbolic.svg">icons/sun-outline-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+      alias="bed-symbolic.svg">icons/bed-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+      alias="power-symbolic.svg">icons/power-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+      alias="processor-symbolic.svg">icons/processor-symbolic.svg</file>
   </gresource>
 </gresources>

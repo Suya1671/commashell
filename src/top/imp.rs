@@ -83,6 +83,18 @@ pub struct Top {
     #[template_child]
     pub wallpaper_click: TemplateChild<gtk::GestureClick>,
 
+    #[property(get, set)]
+    pub cpu_usage_value: RefCell<f32>,
+    #[property(get, set)]
+    pub cpu_usage: RefCell<String>,
+    #[property(get, set)]
+    pub ram_usage_value: RefCell<f32>,
+    #[property(get, set)]
+    pub ram_usage: RefCell<String>,
+
+    #[property(get, set)]
+    pub power_menu_visible: RefCell<bool>,
+
     pub weather_service: weather::WeatherService,
 }
 
@@ -104,7 +116,6 @@ impl Top {
             obj,
             async move {
                 let window = obj.upcast_ref::<gtk::Window>();
-
                 let res = current
                     .wallpaper_dialog
                     .select_folder_future(Some(window))
@@ -190,6 +201,48 @@ impl Top {
         ));
 
         false
+    }
+
+    #[template_callback]
+    pub fn on_power_menu(&self) {
+        let obj = self.obj();
+        obj.set_power_menu_visible(!obj.power_menu_visible());
+    }
+
+    #[template_callback]
+    pub fn on_sleep(&self) {
+        let obj = self.obj();
+        obj.set_power_menu_visible(false);
+        if let Err(e) = system_shutdown::sleep() {
+            eprintln!("Error sleeping: {}", e);
+        }
+    }
+
+    #[template_callback]
+    pub fn on_shutdown(&self) {
+        let obj = self.obj();
+        obj.set_power_menu_visible(false);
+        if let Err(e) = system_shutdown::shutdown() {
+            eprintln!("Error @shutting down: {}", e);
+        }
+    }
+
+    #[template_callback]
+    pub fn on_reboot(&self) {
+        let obj = self.obj();
+        obj.set_power_menu_visible(false);
+        if let Err(e) = system_shutdown::reboot() {
+            eprintln!("Error restarting: {}", e);
+        }
+    }
+
+    #[template_callback]
+    pub fn on_logout(&self) {
+        let obj = self.obj();
+        obj.set_power_menu_visible(false);
+        if let Err(e) = system_shutdown::logout() {
+            eprintln!("Error logging out: {}", e);
+        }
     }
 }
 

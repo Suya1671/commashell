@@ -1,15 +1,15 @@
 use std::{path::PathBuf, process::Command};
 
-use astal_io::{prelude::VariableExt, Variable};
 use futures_util::StreamExt;
 use gtk::{
     gdk::Monitor,
     gio::{self, prelude::*, Settings, SettingsBindFlags},
-    glib::{self, clone::Downgrade, Closure, Object, SendWeakRef, Value},
+    glib::{self, Object},
     prelude::*,
     subclass::prelude::*,
 };
 use gtk4_layer_shell::{Edge, LayerShell};
+use sysinfo::System;
 use wallpaper::WallpaperEntryObject;
 
 use crate::{app::App, config::APP_ID, TOKIO_RUNTIME};
@@ -26,19 +26,6 @@ glib::wrapper! {
 
 impl Top {
     pub fn new(app: &App, monitor: &Monitor) -> Self {
-        let time = Variable::new(&mut "woag".to_value());
-
-        time.pollfn(
-            1000,
-            &Closure::new(move |_| {
-                glib::DateTime::now_local()
-                    .and_then(|dt| dt.format("%H:%M:%S · %A %d/%m"))
-                    .map(Value::from)
-                    .ok()
-            }),
-        )
-        .expect("Expected to create polling function");
-
         let current: Self = Object::builder()
             .property("application", app)
             .property("default-width", monitor.geometry().width())
@@ -78,17 +65,6 @@ impl Top {
             .wallpaper_command_entry
             .set_text(&current.wallpaper_command());
 
-        let time_ref = SendWeakRef::from(Downgrade::downgrade(&time));
-
-        time.bind_property("value", &current, "time")
-            .transform_to(move |_, _: Value| {
-                time_ref
-                    .upgrade()
-                    .and_then(|v| v.value().get::<String>().ok())
-            })
-            .bidirectional()
-            .build();
-
         current.init_layer_shell();
         let anchors = [
             (Edge::Left, true),
@@ -108,6 +84,28 @@ impl Top {
 
         current.present();
 
+        // update system stats
+        glib::spawn_future_local(glib::clone!(
+            #[weak]
+            current,
+            async move {
+                let mut sys = System::new_all();
+                // every 5 seconds
+                let mut stream = glib::interval_stream(std::time::Duration::from_secs(5));
+                sys.refresh_all();
+                std::thread::sleep(sysinfo::MINIMUM_CPU_UPDATE_INTERVAL);
+                sys.refresh_cpu_usage();
+
+                current.update_system_stats(&mut sys);
+
+                while (stream.next().await).is_some() {
+                    sys.refresh_all();
+                    current.update_system_stats(&mut sys);
+                }
+            }
+        ));
+
+        // update weather
         glib::spawn_future_local(glib::clone!(
             #[weak]
             current,
@@ -122,7 +120,38 @@ impl Top {
             }
         ));
 
+        // update time
+        glib::spawn_future_local(glib::clone!(
+            #[weak]
+            current,
+            async move {
+                let mut stream = glib::interval_stream(std::time::Duration::from_secs(1));
+
+                while (stream.next().await).is_some() {
+                    if let Ok(time) =
+                        glib::DateTime::now_local().and_then(|dt| dt.format("%H:%M:%S · %A %d/%m"))
+                    {
+                        current.set_time(time);
+                    };
+                }
+            }
+        ));
+
         current
+    }
+
+    fn update_system_stats(&self, sys: &mut System) {
+        self.set_cpu_usage_value(sys.global_cpu_usage());
+        self.set_cpu_usage(format!("{:.0}%", sys.global_cpu_usage()));
+
+        let used_memory = sys.used_memory() as f64 / sys.total_memory() as f64;
+        self.set_ram_usage_value(used_memory as f32);
+        self.set_ram_usage(format!(
+            " {:.0}GB / {:.0}GB",
+            // bytes to gigabytes
+            sys.used_memory() / 1_000_000_000,
+            sys.total_memory() / 1_000_000_000
+        ));
     }
 
     async fn update_weather(&self) {

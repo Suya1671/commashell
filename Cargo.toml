@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 adw = { version = "0.7.1", package = "libadwaita", features = ["v1_6"] }
 gtk = { version = "0.9.5", package = "gtk4", features = ["v4_16", "blueprint"] }
-tokio = { version = "1.41.1", features = [
+tokio = { version = "1.42.0", features = [
     "rt",
     "macros",
     "rt-multi-thread",
@@ -22,10 +22,12 @@ astal-notifd = { path = "./astal-rs/notifd" }
 astal-apps = { path = "./astal-rs/apps" }
 gtk4-layer-shell = "0.4.0"
 vte4 = { version = "0.8.0", features = ["v0_78"] }
-reqwest = { version = "0.12.9", default-features = false, features = [
+reqwest = { version = "0.12.12", default-features = false, features = [
     "json",
     "rustls-tls",
 ] }
-serde = { version = "1.0.215", features = ["derive"] }
+serde = { version = "1.0.217", features = ["derive"] }
 futures-util = "0.3.31"
-chrono = "0.4.38"
+chrono = "0.4.39"
+system_shutdown = "4.0.1"
+sysinfo = "0.33.1"

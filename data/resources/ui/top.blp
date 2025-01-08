@@ -279,12 +279,149 @@ template $Top: Adw.Window {
 
             end-widget: Box {
                 orientation: horizontal;
+                spacing: 16;
 
                 styles [
-                    "right"
+                    "right-module"
                 ]
 
-                // TODO: various gagues for cpu, ram, etc
+                // TODO: Add more modules here (network, disk, etc)
+                Box {
+                    orientation: horizontal;
+                    spacing: 12;
+
+                    Box {
+                        orientation: horizontal;
+                        spacing: 8;
+
+                        styles [
+                            "cpu-usage"
+                        ]
+
+                        Image {
+                            icon-name: "processor-symbolic";
+                            icon-size: large;
+                        }
+
+                        LevelBar {
+                            value: bind template.cpu_usage_value;
+                            min-value: 0;
+                            max-value: 100;
+                            width-request: 128;
+                            height-request: 32;
+                        }
+
+                        Label {
+                            label: bind template.cpu_usage;
+                            halign: center;
+                            justify: center;
+
+                            styles [
+                                "title-2"
+                            ]
+                        }
+                    }
+
+                    Box {
+                        orientation: horizontal;
+                        spacing: 8;
+
+                        styles [
+                            "ram-usage"
+                        ]
+
+                        Image {
+                            icon-name: "memory-symbolic";
+                            icon-size: large;
+                        }
+
+                        LevelBar {
+                            value: bind template.ram_usage_value;
+                            min-value: 0;
+                            max-value: 1;
+                            width-request: 128;
+                            height-request: 32;
+                        }
+
+                        Label {
+                            label: bind template.ram_usage;
+                            halign: center;
+                            justify: center;
+
+                            styles [
+                                "title-2"
+                            ]
+                        }
+                    }
+                }
+
+                Separator {
+                    orientation: vertical;
+                }
+
+                Box {
+                    orientation: horizontal;
+
+                    Revealer {
+                        reveal-child: bind template.power-menu-visible;
+                        transition-type: slide_left;
+                        transition-duration: 200;
+
+                        Box {
+                            orientation: horizontal;
+
+                            Button {
+                                icon-name: "bed-symbolic";
+                                clicked => $on_sleep() swapped;
+
+                                styles [
+                                    "sleep-button"
+                                ]
+                            }
+
+                            Button {
+                                icon-name: "system-log-out-symbolic";
+                                clicked => $on_logout() swapped;
+
+                                styles [
+                                    "logout-button"
+                                ]
+                            }
+
+                            Button {
+                                icon-name: "system-reboot-symbolic";
+                                clicked => $on_reboot() swapped;
+
+                                styles [
+                                    "reboot-button"
+                                ]
+                            }
+
+                            Button {
+                                icon-name: "system-shutdown-symbolic";
+                                clicked => $on_power_menu() swapped;
+
+                                styles [
+                                    "shutdown-button"
+                                ]
+                            }
+
+                            styles [
+                                "power-menu",
+                                "linked"
+                            ]
+                        }
+                    }
+
+                    Button {
+                        icon-name: "power-symbolic";
+                        clicked => $on_power_menu() swapped;
+
+                        styles [
+                            "power-button"
+                        ]
+                    }
+                }
             };
         }
     }

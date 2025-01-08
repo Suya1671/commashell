@@ -11,7 +11,6 @@ impl WeatherService {
         }
     }
 
-    // TODO: allow custom location rather than GeoIP
     pub async fn get_weather(&self, location: &str) -> Result<Wttr, reqwest::Error> {
         let response = self
             .http

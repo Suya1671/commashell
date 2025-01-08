@@ -56,6 +56,47 @@
     padding: 0.5rem 1rem;
 }
 
+.power-button {
+    margin: 0px;
+}
+
+.power-menu {
+    margin-right: 1rem;
+}
+
+.power-button:hover {
+    color: var(--accent-color);
+}
+
+.shutdown-button:hover,
+.reboot-button:hover {
+    color: var(--error-color);
+}
+
+.logout-button:hover,
+.sleep-button:hover {
+    color: var(--warning-color);
+}
+
+.ram-usage,
+.cpu-usage {
+    background-color: var(--dialog-bg-color);
+
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-radius: 12px;
+}
+
+.cpu-usage > image {
+    color: var(--accent-blue);
+}
+
+.ram-usage > image {
+    color: var(--accent-orange);
+}
+
 /* right */
 .right {
     margin-top: 1rem;

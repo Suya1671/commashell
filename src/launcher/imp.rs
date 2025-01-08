@@ -56,7 +56,6 @@ impl Launcher {
         let text = entry.text();
         let application = self.obj().application().as_ref().unwrap().clone();
 
-        // TODO: configurable set of launchers
         fn launch_if_can<L: LauncherTrait>(
             model: &gio::ListStore,
             launcher: L,
