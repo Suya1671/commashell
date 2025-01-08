@@ -24,8 +24,8 @@ I will add support for usage with other rices soon. Many things will look wrong 
 - Launcher
   - [x] Fuzzy app launcher
   - [x] Calculator (requires [libqalculate](https://qalculate.github.io/). `= ` prefix)
-  - [x] Journal entry (requires Obsidian + Thino Pro plugin. I will add support for other journaling apps soon:tm:. `; ` prefix)
-  - [ ] Task taking (will use ticktick. I will add support for other task managers soon:tm:)
+  - [x] Journal entry (requires Obsidian + Thino Pro plugin. I will add support for other journaling apps soon™. `; ` prefix)
+  - [ ] Task taking (will use ticktick. I will add support for other task managers soon™)
 
 ## Installation
 NOTE: due to this being beta, it is not easily distributed or packaged. You will have to build it yourself.
@@ -61,7 +61,7 @@ ninja -C build
 ./build/src/commashell
 ```
 
-And it should just work:tm:.
+And it should just work™.
 Right click on the top bar's weather and wallpaper buttons to configure them.
 
 ## Talk is cheap, show me the screenshots
